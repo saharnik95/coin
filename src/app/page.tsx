@@ -1,9 +1,10 @@
-import Image from "next/image";
-
+import HomeComponent from "@/module/home/HomeComponent";
 export default function Home() {
   return (
     <div className="">
-      <main className="">سحر</main>
+      <main className="">
+        <HomeComponent />
+      </main>
     </div>
   );
 }
