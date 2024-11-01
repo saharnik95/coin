@@ -6,7 +6,7 @@ import Image from "next/image";
 const FooterComponent: React.FC = () => {
   return (
     <footer
-      className="bg-[#1B2A4E] basis-[579px] tablet:basis-[357px] desktop:basis-[402px] fixed bottom-0
+      className="bg-[#1B2A4E] basis-[579px] tablet:basis-[357px] desktop:basis-[402px]  bottom-0
     desktop:px-[150px] tablet:px-[50px] px-[18px] desktop:pt-[42px] tablet:pt-[52px] pt-[56px] pb-[24px] desktop:pb-[34px] 
     flex flex-col
     "
