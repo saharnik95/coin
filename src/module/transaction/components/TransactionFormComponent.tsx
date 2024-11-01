@@ -3,7 +3,7 @@ import React from "react";
 import Formschema from "@/module/transaction/components/Formschema";
 
 interface TransactionFormComponentProps {
-  name?: string; // Optional to handle undefined values
+  name?: string;
   code?: string;
   change?: number;
   buy?: number;
@@ -26,7 +26,7 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
   value,
 }) => {
   return (
-    <div className=" bg-white shadow-custom w-full rounded-[30px] flex flex-col tablet:flex-row desktop:py-[29px] desktop:px-[33px] tablet:py-[45px] tablet:px-[25px] py-[32px] px-[22px] gap-[85px]">
+    <div className=" bg-white shadow-custom w-full rounded-[30px] flex flex-col tablet:flex-row desktop:py-[29px] desktop:px-[33px] tablet:py-[45px] tablet:px-[25px] py-[32px] px-[22px] desktop:gap-[45px] tablet:gap-[28px] gap-[26px]">
       <div className="flex flex-col desktop:gap-x-[27px] tablet:gap-x-[32px] gap-y-[25px] w-full justify-between ">
         <div className=" flex-flex-row">
           <h5 className="text-black  font-semibold desktop:text-[16px] desktop:leading-[25px]  leading-[22px] text-[14px] ">
@@ -73,6 +73,7 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
             تغییر قیمت امروز :
           </h5>
           <h5
+            dir="ltr"
             className={`font-normal desktop:text-[16px] desktop:leading-[2px]  leading-[18px] text-[12px] ${
               (change ?? 0) > 0 ? "text-[#147D03]" : "text-[#EF4040]"
             } `}

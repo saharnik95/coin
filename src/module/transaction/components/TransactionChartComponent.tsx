@@ -1,5 +1,5 @@
 "use client";
-
+import "@/module/core/styles/globals.css";
 import React from "react";
 import { Line } from "react-chartjs-2";
 import {
@@ -13,7 +13,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { ChartOptions } from "chart.js";
+import { ChartOptions, LegendItem } from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -37,7 +37,7 @@ interface TransactionChartComponentProps {
 type TimePeriod = "24h" | "1w" | "1m" | "1y";
 
 const timeLabels = {
-  "24h": Array.from({ length: 24 }, (_, i) => `${(i + 8) % 24}:30`),
+  "24h": Array.from({ length: 24 }, (_, i) => `${(i + 19) % 24}:29`),
   "1w": [
     "sun",
     "mon",
@@ -149,6 +149,16 @@ export default function TransactionChartComponent({
           font: { family: "font-iran, sans-serif" },
           usePointStyle: true,
           pointStyle: "circle",
+          generateLabels: (chart: ChartJS): LegendItem[] => {
+            const datasets = chart.data.datasets;
+            return datasets.map((dataset, i) => ({
+              text: dataset.label || "", // Ensure text is a string, defaulting to an empty string if undefined
+              fillStyle: dataset.borderColor as string,
+              strokeStyle: dataset.borderColor as string,
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i,
+            }));
+          },
         },
       },
     },
@@ -177,7 +187,6 @@ export default function TransactionChartComponent({
       },
     },
   };
-  const maxYValue = Math.max(...usdPrices, ...currencyPrices, ...equality); // یا مقدار ثابت مثل 70000
 
   const bottomChartOptions: ChartOptions<"line"> = {
     maintainAspectRatio: false, // Set this to false to allow custom height
@@ -196,6 +205,16 @@ export default function TransactionChartComponent({
           font: { family: "font-iran, sans-serif" },
           usePointStyle: true,
           pointStyle: "circle",
+          generateLabels: (chart: ChartJS): LegendItem[] => {
+            const datasets = chart.data.datasets;
+            return datasets.map((dataset, i) => ({
+              text: dataset.label || "", // Ensure text is a string, defaulting to an empty string if undefined
+              fillStyle: dataset.borderColor as string,
+              strokeStyle: dataset.borderColor as string,
+              hidden: !chart.isDatasetVisible(i),
+              datasetIndex: i,
+            }));
+          },
         },
       },
     },
@@ -254,7 +273,11 @@ export default function TransactionChartComponent({
               ))}
             </div>
             <div className="space-y-4">
-              <Line options={topChartOptions} data={chartData} />
+              <Line
+                options={topChartOptions}
+                data={chartData}
+                className="z-8"
+              ></Line>
               <div className="w-full ">
                 <Line options={bottomChartOptions} data={bottomChartData} />
               </div>{" "}

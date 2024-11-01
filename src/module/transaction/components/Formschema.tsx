@@ -70,6 +70,8 @@ export default function ProfileForm() {
       const convertedAmount =
         (amount * firstCurrencyData.usd) / secondCurrencyData.usd;
       setConvertedAmount(convertedAmount); // Update state with the converted amount
+      console.log(" Amount:", amount); // Log the converted amount
+
       console.log("Converted Amount:", convertedAmount); // Log the converted amount
     } else {
       setConvertedAmount(null); // Reset if currencies are not found
@@ -80,7 +82,7 @@ export default function ProfileForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className=" flex flex-col w-full justify-between gap-3"
+        className=" flex flex-col w-full justify-between desktop:gap-[18px] gap-3"
       >
         <h5 className="text-black font-semibold desktop:text-[16px] desktop:leading-[25px] leading-[22px] text-[14px]">
           ارسال می کنید:
@@ -93,10 +95,11 @@ export default function ProfileForm() {
               <FormItem className="border-none w-full">
                 <FormControl className="border-none w-full">
                   <input
-                    type="number" // Ensure this is a number input
-                    className="border-none ring-none outline-none w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none"
-                    placeholder="مقدار را وارد کنید"
                     {...field}
+                    type="number" // Ensure this is a number input
+                    className="border-none ring-none outline-none w-full p-3 text-[#696464] desktop:leading-[22px] leading-[18px] desktop:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none
+                       ${!field.value ? 'text-gray-500' : 'text-[#696464]'} "
+                    placeholder="مقدار را وارد کنید"
                   />
                 </FormControl>
                 <FormMessage />
@@ -117,7 +120,21 @@ export default function ProfileForm() {
                 >
                   <FormControl className="w-full">
                     <SelectTrigger className="border-r pt-3 border-[1px] border-solid border-[#9b9b9b]  border-l-0 border-t-0 border-b-0  w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] rounded-r-0 desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
-                      <SelectValue placeholder="تومان" />
+                      <div className="flex flex-row gap-3 items-center">
+                        {!field.value && ( // Conditionally render the image if no selection is made
+                          <Image
+                            src="/images/transaction/form/iran.png"
+                            alt="currency"
+                            className="w-[26px] h-[26px]"
+                            width={26}
+                            height={26}
+                          />
+                        )}
+                        <SelectValue
+                          placeholder="تومان"
+                          className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[12px]  text-[12px]"
+                        />
+                      </div>
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -145,11 +162,10 @@ export default function ProfileForm() {
           />
         </div>
 
-        {/* Image Below the Form Fields */}
-        <div className="flex w-full justify-end">
+        <div className="flex w-full justify-end desktop:pt-[16px] pt-2">
           <div
-            className="rounded-full cursor-pointer justify-self-end flex bg-[#E8E8E8] justify-center items-center w-[40px] h-[40px]"
-            onClick={calculateAmount} // Call calculateAmount on click
+            className="rounded-full cursor-pointer justify-self-end flex bg-[#E8E8E8] justify-center items-center w-[40px] h-[40px] "
+            onClick={calculateAmount}
           >
             <Image
               src="/images/transaction/form/Ellipse 48.svg"
@@ -166,7 +182,7 @@ export default function ProfileForm() {
         </h5>
 
         <div className="flex flex-row space-x-4">
-          <div className=" ring-none w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none">
+          <div className=" ring-none w-full p-3 text-[#696464] font-light tablet:leading-[22px] leading-[18px] desktop:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none">
             {convertedAmount !== null
               ? `${convertedAmount.toFixed(2)}`
               : "مقدار نهایی"}{" "}
@@ -179,14 +195,29 @@ export default function ProfileForm() {
               <FormItem className="border-none w-full">
                 <Select
                   onValueChange={(value) => {
-                    console.log("Selected final currency:", value); // Log final selected currency
                     field.onChange(value);
                   }}
                   value={field.value} // Bind the value to the form state
                 >
-                  <FormControl>
+                  <FormControl className="p-0">
                     <SelectTrigger className="border-r border-[1px] border-solid border-[#9b9b9b]  border-l-0 border-t-0 border-b-0  w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
-                      <SelectValue placeholder="بیت کوین" />
+                      <div className="flex flex-row gap-3 items-center">
+                        {!field.value && ( // Conditionally render the image if no selection is made
+                          <Image
+                            src="/images/transaction/form/bitcoin.png"
+                            alt="currency"
+                            className="w-[26px] h-[26px]" // Adjust the margin as needed
+                            width={26}
+                            height={26}
+                          />
+                        )}
+                        <SelectValue
+                          className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px]
+                              ${!field.value ? 'text-gray-500' : 'text-[#696464]'} 
+"
+                          placeholder=" بیت کوین"
+                        />
+                      </div>
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -215,7 +246,7 @@ export default function ProfileForm() {
         </div>
 
         {/* Dynamic Rate Display */}
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between desktop:pt-2 pt-1">
           <h5 className="text-black font-semibold desktop:text-[16px] desktop:leading-[25px] leading-[22px] text-[14px] ">
             نرخ ارز یک
           </h5>
@@ -235,11 +266,11 @@ export default function ProfileForm() {
             {transactionMock.SecondCurrencies.find(
               (c) => c.name === form.watch("secondCurrency")
             )?.usd || "0"}{" "}
-            دلار
+            تومان
           </h5>
         </div>
 
-        <Button className="mt-4 h-[47px] bg-white ring-1 ring--[#0D1A8E] text-[#0D1A8E] border-[#0D1A8E] border-1px border-solid desktop:rounded-[50px] rounded-[8px] hover:bg-[#1652F0] hover:text-white">
+        <Button className="mt-4 h-[47px] bg-white ring-1 ring--[#0D1A8E] text-[#0D1A8E] border-[#0D1A8E] border-1px border-solid desktop:rounded-[50px] rounded-[8px] hover:bg-[#1652F0] hover:text-white desktop:pt-2 pt-1">
           ادامه خرید
         </Button>
       </form>

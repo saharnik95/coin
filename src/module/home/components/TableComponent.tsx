@@ -45,8 +45,9 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const router = useRouter();
   const [allData, setAllData] = React.useState<TableData[]>([]);
   const [totalItems, setTotalItems] = React.useState<number>(0);
-  const [activeTab, setActiveTab] = React.useState<string>("دیفای");
+  const [totalItems2, setTotalItems2] = React.useState<number>(0);
 
+  const [activeTab, setActiveTab] = React.useState<string>("دیفای");
   const handleTransaction = (item: TableData) => {
     sessionStorage.setItem(
       "transactionData",
@@ -114,24 +115,20 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const renderPaginationButtons = (totalItems: number) => {
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const buttons: JSX.Element[] = [];
-    const maxButtonsToShow = 4; // Adjusted to accommodate two additional buttons after the last
-    const halfButtons = Math.floor((maxButtonsToShow - 2) / 2); // To leave space for 1 and 2 ellipsis
+    const maxButtonsToShow = 4;
+    const halfButtons = Math.floor((maxButtonsToShow - 2) / 2);
 
-    // Start and end page logic
     let startPage = Math.max(2, currentPage - halfButtons);
     let endPage = Math.min(totalPages - 1, currentPage + halfButtons);
 
-    // Ensure that we always show two pages after the current page if possible
     if (currentPage + halfButtons >= totalPages - 1) {
       endPage = Math.min(totalPages - 1, currentPage + 2);
     }
 
-    // Adjust startPage when close to the beginning
     if (currentPage <= halfButtons + 1) {
       endPage = Math.min(maxButtonsToShow - 1, totalPages - 1);
     }
 
-    // Always show the first page
     buttons.push(
       <button
         key={1}
@@ -146,7 +143,6 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       </button>
     );
 
-    // Add ellipsis if needed
     if (startPage > 2) {
       buttons.push(
         <button
@@ -159,7 +155,6 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       );
     }
 
-    // Add the page buttons between the start and end
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
         <button
@@ -177,7 +172,6 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       );
     }
 
-    // Add ellipsis if there are more pages after the current range
     if (endPage < totalPages - 1) {
       buttons.push(
         <button
@@ -190,7 +184,6 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       );
     }
 
-    // Always show the last page
     if (totalPages > 1) {
       buttons.push(
         <button
@@ -230,7 +223,8 @@ export default function ResponsiveTabbedTablesWithAccordion() {
         }
 
         const data = await response.json();
-
+        console.log(data.count);
+        setTotalItems2(data.count);
         if (data.items && Array.isArray(data.items)) {
           const newTableData = generateTableData(data.items);
           setAllData(newTableData);
@@ -319,6 +313,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                   ${formatNumberWithCommas(item.value)}
                 </TableCell>
                 <TableCell
+                  dir="ltr"
                   className={`text-center font-normal tablet:leading-[22px] desktop:leading-[22px] desktop:text-[14px] leading-[18px]  text-[12px] text-nowrap ${
                     item.change > 0 ? "text-[#147D03]" : "text-[#EF4040]"
                   }`}
@@ -344,7 +339,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
           </TableBody>
         </Table>
         <div className="flex items-center justify-center space-x-2 py-4">
-          {renderPaginationButtons(89)}
+          {renderPaginationButtons(totalItems2)}
         </div>
       </div>
     );
@@ -506,7 +501,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
           className="flex items-center justify-center space-x-2 py-4"
           dir="ltr"
         >
-          {renderPaginationButtons(89)}
+          {renderPaginationButtons(totalItems2)}
         </div>
       </div>
     </div>

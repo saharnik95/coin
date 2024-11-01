@@ -10,7 +10,7 @@ const HeaderComponent: React.FC = () => {
       <div className="flex flex-row-reverse tablet:flex-row gap-x-[10.26px] tablet:gap-x-[27px] desktop:gap-x-[47px]">
         {/*Logo*/}
         <div className=" flex items-center">
-          <Link href={headerMock.logoUrl} target={"_blank"}>
+          <Link href={"/"} target={"_blank"}>
             <Image
               src={headerMock.logoUrl}
               alt={"logo"}

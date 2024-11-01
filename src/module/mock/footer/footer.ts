@@ -8,11 +8,13 @@ interface Social {
 interface Links {
   id: number;
   name: string;
+  alt: string;
 }
 
 interface currency {
   id: number;
   name: string;
+  alt: string;
 }
 
 interface FooterMock {
@@ -70,35 +72,43 @@ export const footerMock: FooterMock = {
     {
       id: 1,
       name: "صفحه اصلی",
+      alt: "",
     },
     {
       id: 2,
       name: "سوالات متداول",
+      alt: "questions",
     },
     {
       id: 3,
       name: "قیمت رمزارزها",
+      alt: "prices",
     },
     {
       id: 4,
       name: "شرایط و قوانین ",
+      alt: "rules",
     },
     {
       id: 5,
       name: "مقالات و وبلاگ",
+      alt: "articles",
     },
 
     {
       id: 6,
       name: "فرصت های شغلی ",
+      alt: "opurtunities",
     },
     {
       id: 7,
       name: "درباره ما",
+      alt: "about",
     },
     {
       id: 8,
       name: " انجمن",
+      alt: " forum",
     },
   ],
 
@@ -106,36 +116,44 @@ export const footerMock: FooterMock = {
     {
       id: 1,
       name: " بیت کوین",
+      alt: "/BTC",
     },
     {
       id: 2,
       name: " یواس دی کوین ",
+      alt: "/USDC",
     },
     {
       id: 3,
       name: "اتریوم ",
+      alt: "/ETH",
     },
 
     {
       id: 4,
       name: "  چین لینک ",
+      alt: "/LINK",
     },
     {
       id: 5,
       name: " ریپل",
+      alt: "/XRP",
     },
     {
       id: 6,
       name: " دوج کوین",
+      alt: "/DOGE",
     },
     {
       id: 7,
       name: " سولانا",
+      alt: "/SOL",
     },
 
     {
       id: 8,
       name: " تتر ",
+      alt: "/USDT",
     },
   ],
 };

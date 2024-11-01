@@ -14,7 +14,9 @@ const FooterComponent: React.FC = () => {
       <div className="flex tablet:flex-row flex-col justify-between desktop:gap-x-[38px] tablet:gap-x-[33px] gap-y-[22px] desktop:pb-[40px] pb-[30px]">
         {/*Logo and About*/}
         <div className="flex flex-col justify-between gap-y-[16px] tablet:gap-y-[23px] desktop:gap-y-[14px] ">
-          <Link href={footerMock.logoUrl} target={"_blank"}>
+          <Link
+            href={"/"} // Adjust the href for home
+          >
             <Image
               src={footerMock.logoUrl}
               alt={"logo"}
@@ -38,11 +40,10 @@ const FooterComponent: React.FC = () => {
               لینک های مرتبط
             </h3>
             <section className="grid grid-cols-2 gap-y-[15px] gap-x-[50px] tablet:gap-x-[100px] h-full  ">
-              {footerMock.conectedLinks.map(({ id, name }) => (
+              {footerMock.conectedLinks.map(({ id, name, alt }) => (
                 <div key={id} className="flex items-end">
                   <Link
-                    href={`http://localhost/${name}`}
-                    target="_blank"
+                    href={alt === "صفحه اصلی" ? "/" : `/${alt}`}
                     className="inline-block"
                   >
                     <h4 className="text-white font-normal desktop:text-base text-xs text-nowrap text-right">
@@ -56,15 +57,23 @@ const FooterComponent: React.FC = () => {
 
           {/*Currency Share*/}
           <div className="flex flex-col h-full justify-between ">
-            <h3 className="text-white font-black desktop:text-xl  desktop:leading-[31px] tablet:leading-[25px] leading-[21px] tablet:text-base text-sm text-nowrap text-right mb-[24px] tablet:mb-[31px] desktop:mb-[25px]">
+            <h3 className="text-white font-black desktop:text-xl desktop:leading-[31px] tablet:leading-[25px] leading-[21px] tablet:text-base text-sm text-nowrap text-right mb-[24px] tablet:mb-[31px] desktop:mb-[25px]">
               تبادل ارز
             </h3>
-            <section className="grid grid-cols-1 desktop:grid-cols-2 gap-y-[15px] gap-x-[50px] tablet:gap-x-[100px] h-full">
-              {footerMock.currencyShare.slice(0, 4).map(({ id, name }) => (
+            <section className="grid grid-cols-1 tablet:grid-cols-2 gap-y-[15px] gap-x-[50px] tablet:gap-x-[100px] h-full">
+              {[
+                ...footerMock.currencyShare.slice(0, 1), // item at index 0
+                ...footerMock.currencyShare.slice(2, 3), // item at index 2
+                ...footerMock.currencyShare.slice(4, 5), // item at index 4
+                ...footerMock.currencyShare.slice(6, 7), // item at index 6
+              ].map(({ id, name, alt }) => (
                 <div key={id} className="flex items-end">
                   <Link
-                    href={`http://localhost/${name}`}
-                    target="_blank"
+                    href={
+                      alt === "صفحه اصلی"
+                        ? "/"
+                        : `http://localhost:3000/transaction/${alt}`
+                    }
                     className="inline-block"
                   >
                     <h4 className="text-white font-normal desktop:text-base text-xs desktop:leading-[25px] leading-[18.78px] text-nowrap text-right">
@@ -75,7 +84,7 @@ const FooterComponent: React.FC = () => {
               ))}
               {footerMock.currencyShare.length > 4 &&
                 footerMock.currencyShare.slice(4).map(({ id, name }) => (
-                  <div key={id} className="hidden desktop:flex items-end">
+                  <div key={id} className="hidden tablet:flex items-end">
                     <Link
                       href={`http://localhost/${name}`}
                       target="_blank"

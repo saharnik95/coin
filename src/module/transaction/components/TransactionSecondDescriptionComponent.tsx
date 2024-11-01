@@ -3,7 +3,7 @@ interface TransactionComponentProps {
   slug: string;
 }
 interface TransactionSecondDescriptionComponentProps {
-  name?: string; // Optional to handle undefined values
+  name?: string;
   code?: string;
   change?: number;
   buy?: number;
@@ -25,7 +25,13 @@ const TransactionSecondDescriptionComponent: React.FC<
         className="desktop:pt-[50px] pt-[36px]
       font-normal desktop:text-base desktop:leading-[32px] tablet:text-sm tablet:leading-[28px] leading-[28px] text-xs text-justify"
       >
-        {transactionMock.Seconstabout}
+        {transactionMock.Secondabout[0].first}
+      </p>
+      <p
+        className="
+      font-normal desktop:text-base desktop:leading-[32px] tablet:text-sm tablet:leading-[28px] leading-[28px] text-xs text-justify"
+      >
+        {transactionMock.Secondabout[0].second}
       </p>
     </div>
   );
