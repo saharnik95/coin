@@ -27,7 +27,12 @@ const iran_sans_font = localFont({
     },
     {
       path: "../assets/font/IRANSansWeb_Black.woff2",
-      weight: "600",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../assets/font/IRANSansWeb_Black.woff2",
+      weight: "900",
       style: "normal",
     },
   ],
