@@ -6,10 +6,9 @@ import Image from "next/image";
 const FooterComponent: React.FC = () => {
   return (
     <footer
-      className="bg-[#1B2A4E] basis-[579px] tablet:basis-[357px] desktop:basis-[402px] w-full
+      className="bg-[#1B2A4E] basis-[579px] tablet:basis-[357px] desktop:basis-[402px] w-full overflow-hidden
     desktop:px-[150px] tablet:px-[50px] px-[18px] desktop:pt-[42px] tablet:pt-[52px] pt-[56px] pb-[24px] desktop:pb-[34px] 
-    flex flex-col
-    "
+    flex flex-col bottom-0 z-99"
     >
       <div className="flex tablet:flex-row flex-col justify-between desktop:gap-x-[38px] tablet:gap-x-[33px] gap-y-[22px] desktop:pb-[40px] pb-[30px]">
         {/*Logo and About*/}
