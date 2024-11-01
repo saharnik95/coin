@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { homeMock } from "@/module/mock/home/home";
 
 const DescriptionComponent: React.FC = () => {

@@ -29,9 +29,6 @@ ChartJS.register(
 interface TransactionChartComponentProps {
   name?: string;
   code?: string;
-  change?: number;
-  buy?: number;
-  sell?: number;
 }
 
 type TimePeriod = "24h" | "1w" | "1m" | "1y";
@@ -66,9 +63,6 @@ const timeLabels = {
 export default function TransactionChartComponent({
   name,
   code,
-  change,
-  buy,
-  sell,
 }: TransactionChartComponentProps = {}) {
   const [period, setPeriod] = React.useState<TimePeriod>("24h");
   const [currencyPrices, setCurrencyPrices] = React.useState<number[]>([]);

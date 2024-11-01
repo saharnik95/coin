@@ -17,11 +17,11 @@ interface TransactionMock {
   PicUrl: string;
   PicUrl2: string;
   Firstabout: string;
-  Seconstabout: string;
+  Secondabout: Second[];
   FirstCurrencies: FirstCurrency[];
   SecondCurrencies: SecondCurrency[];
 }
-interface Secondabout {
+interface Second {
   first: string;
   second: string;
 }

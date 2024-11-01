@@ -11,14 +11,10 @@ import {
 
 interface TransactionQuestionComponentProps {
   name?: string; // Optional to handle undefined values
-  code?: string;
-  change?: number;
-  buy?: number;
-  sell?: number;
 }
 const TransactionQuestionComponent: React.FC<
   TransactionQuestionComponentProps
-> = ({ name, code, change, buy, sell }) => {
+> = ({ name }) => {
   return (
     <div className="w-full tablet:pt-[108px] pt-[50px]  ">
       <h2

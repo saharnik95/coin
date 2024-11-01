@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { headerMock } from "@/module/mock/header/header";
 
 const HeaderProfileComponent: React.FC = () => {

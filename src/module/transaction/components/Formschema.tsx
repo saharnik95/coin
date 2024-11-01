@@ -16,23 +16,19 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 
-// Define the shape of your form data
 interface ProfileFormValues {
-  amount: number; // Change to number
+  amount: number;
   firstCurrency: string;
   secondCurrency: string;
 }
 
-// Create a Zod schema for validation
 const formSchema = z.object({
-  amount: z.number().min(0, { message: "باید یک عدد مثبت باشد." }), // Ensure it's a positive number
+  amount: z.number().min(0, { message: "باید یک عدد مثبت باشد." }),
   firstCurrency: z.string().nonempty({
     message: "لطفا انتخاب کنید.",
   }),
@@ -42,21 +38,20 @@ const formSchema = z.object({
 });
 
 export default function ProfileForm() {
-  const [convertedAmount, setConvertedAmount] = useState<number | null>(null); // State for the converted amount
+  const [convertedAmount, setConvertedAmount] = useState<number | null>(null);
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      amount: 0, // Set default value to 0
+      amount: 0,
       firstCurrency: "",
       secondCurrency: "",
     },
   });
 
   const onSubmit: SubmitHandler<ProfileFormValues> = (data) => {
-    console.log("Form submitted with data:", data); // Log form submission data
+    console.log("Form submitted with data:", data);
   };
 
-  // Calculate the converted amount
   const calculateAmount = () => {
     const { amount, firstCurrency, secondCurrency } = form.getValues();
     const firstCurrencyData = transactionMock.FirstCurrencies.find(
@@ -69,12 +64,12 @@ export default function ProfileForm() {
     if (firstCurrencyData && secondCurrencyData) {
       const convertedAmount =
         (amount * firstCurrencyData.usd) / secondCurrencyData.usd;
-      setConvertedAmount(convertedAmount); // Update state with the converted amount
-      console.log(" Amount:", amount); // Log the converted amount
+      setConvertedAmount(convertedAmount);
+      console.log(" Amount:", amount);
 
-      console.log("Converted Amount:", convertedAmount); // Log the converted amount
+      console.log("Converted Amount:", convertedAmount);
     } else {
-      setConvertedAmount(null); // Reset if currencies are not found
+      setConvertedAmount(null);
     }
   };
 
@@ -90,13 +85,13 @@ export default function ProfileForm() {
         <div className="flex flex-row space-x-4 w-full">
           <FormField
             control={form.control}
-            name="amount" // Updated to reflect the new structure
+            name="amount"
             render={({ field }) => (
               <FormItem className="border-none w-full">
                 <FormControl className="border-none w-full">
                   <input
                     {...field}
-                    type="number" // Ensure this is a number input
+                    type="number"
                     className="border-none ring-none outline-none w-full p-3 text-[#696464] desktop:leading-[22px] leading-[18px] desktop:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none
                        ${!field.value ? 'text-gray-500' : 'text-[#696464]'} "
                     placeholder="مقدار را وارد کنید"
@@ -108,20 +103,20 @@ export default function ProfileForm() {
           />
           <FormField
             control={form.control}
-            name="firstCurrency" // Updated to match the structure
+            name="firstCurrency"
             render={({ field }) => (
               <FormItem className="border-none w-full">
                 <Select
                   onValueChange={(value) => {
-                    console.log("Selected currency:", value); // Log selected currency
-                    field.onChange(value); // Trigger the field change
+                    console.log("Selected currency:", value);
+                    field.onChange(value);
                   }}
-                  value={field.value} // Bind the value to the form state
+                  value={field.value}
                 >
                   <FormControl className="w-full">
                     <SelectTrigger className="border-r pt-3 border-[1px] border-solid border-[#9b9b9b]  border-l-0 border-t-0 border-b-0  w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] rounded-r-0 desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
                       <div className="flex flex-row gap-3 items-center">
-                        {!field.value && ( // Conditionally render the image if no selection is made
+                        {!field.value && (
                           <Image
                             src="/images/transaction/form/iran.png"
                             alt="currency"
@@ -186,27 +181,26 @@ export default function ProfileForm() {
             {convertedAmount !== null
               ? `${convertedAmount.toFixed(2)}`
               : "مقدار نهایی"}{" "}
-            {/* Display the converted amount */}
           </div>
           <FormField
             control={form.control}
-            name="secondCurrency" // Updated to match the structure
+            name="secondCurrency"
             render={({ field }) => (
               <FormItem className="border-none w-full">
                 <Select
                   onValueChange={(value) => {
                     field.onChange(value);
                   }}
-                  value={field.value} // Bind the value to the form state
+                  value={field.value}
                 >
                   <FormControl className="p-0">
                     <SelectTrigger className="border-r border-[1px] border-solid border-[#9b9b9b]  border-l-0 border-t-0 border-b-0  w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
                       <div className="flex flex-row gap-3 items-center">
-                        {!field.value && ( // Conditionally render the image if no selection is made
+                        {!field.value && (
                           <Image
                             src="/images/transaction/form/bitcoin.png"
                             alt="currency"
-                            className="w-[26px] h-[26px]" // Adjust the margin as needed
+                            className="w-[26px] h-[26px]"
                             width={26}
                             height={26}
                           />

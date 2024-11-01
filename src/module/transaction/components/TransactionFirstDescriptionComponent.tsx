@@ -3,14 +3,10 @@ import Image from "next/image";
 
 interface TransactionFirstDescriptionComponentProps {
   name?: string; // Optional to handle undefined values
-  code?: string;
-  change?: number;
-  buy?: number;
-  sell?: number;
 }
 const TransactionFirstDescriptionComponent: React.FC<
   TransactionFirstDescriptionComponentProps
-> = ({ name, code, change, buy, sell }) => {
+> = ({ name }) => {
   return (
     <div className="tablet:pt-[161px] pt-[50px] w-full ">
       <div className="flex desktop:justify-start justify-center items-center">

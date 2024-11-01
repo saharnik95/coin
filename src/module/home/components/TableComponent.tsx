@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -118,7 +117,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
     const maxButtonsToShow = 4;
     const halfButtons = Math.floor((maxButtonsToShow - 2) / 2);
 
-    let startPage = Math.max(2, currentPage - halfButtons);
+    const startPage = Math.max(2, currentPage - halfButtons);
     let endPage = Math.min(totalPages - 1, currentPage + halfButtons);
 
     if (currentPage + halfButtons >= totalPages - 1) {

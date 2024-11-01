@@ -31,34 +31,10 @@ const TransactionComponent: React.FC<TransactionComponentProps> = ({}) => {
           value={value}
         />
 
-        <TransactionFirstDescriptionComponent
-          name={name}
-          code={code}
-          change={change}
-          buy={buy}
-          sell={sell}
-        />
-        <TransactionChartComponent
-          name={name}
-          code={code}
-          change={change}
-          buy={buy}
-          sell={sell}
-        />
-        <TransactionSecondDescriptionComponent
-          name={name}
-          code={code}
-          change={change}
-          buy={buy}
-          sell={sell}
-        />
-        <TransactionQuestionComponent
-          name={name}
-          code={code}
-          change={change}
-          buy={buy}
-          sell={sell}
-        />
+        <TransactionFirstDescriptionComponent name={name} />
+        <TransactionChartComponent name={name} code={code} />
+        <TransactionSecondDescriptionComponent name={name} />
+        <TransactionQuestionComponent name={name} />
       </div>
     </QueryClientProvider>
   );

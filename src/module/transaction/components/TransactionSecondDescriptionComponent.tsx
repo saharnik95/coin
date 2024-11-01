@@ -1,18 +1,12 @@
 import { transactionMock } from "@/module/mock/transaction/transaction";
-interface TransactionComponentProps {
-  slug: string;
-}
+
 interface TransactionSecondDescriptionComponentProps {
   name?: string;
-  code?: string;
-  change?: number;
-  buy?: number;
-  sell?: number;
 }
 
 const TransactionSecondDescriptionComponent: React.FC<
   TransactionSecondDescriptionComponentProps
-> = ({ name, code, change, buy, sell }) => {
+> = ({ name }) => {
   return (
     <div className="tablet:pt-[108px] pt-[40px]">
       <h2
