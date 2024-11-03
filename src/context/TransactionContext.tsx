@@ -37,7 +37,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const data = sessionStorage.getItem("transactionData");
+      const data = localStorage.getItem("transactionData");
       if (data) {
         setTransactionData(JSON.parse(data));
       }
