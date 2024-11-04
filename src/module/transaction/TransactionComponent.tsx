@@ -29,69 +29,70 @@ export default function TransactionComponent() {
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
-  const id = params.id as string;
+  const code = params.id as string;
 
-  const fetchTransactionData = async (retries = 5) => {
-    if (!id) {
-      setError("No transaction ID provided");
+  const fetchTransactionData = async () => {
+    if (!code) {
+      setError("No currency code provided");
       setLoading(false);
       return;
     }
 
-    for (let attempt = 0; attempt < retries; attempt++) {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch(`/api/transaction-data?id=${id}`);
+    try {
+      setLoading(true);
+      setError(null);
+      console.log("Fetching transaction data for code:", code);
+      const response = await fetch("https://b.wallet.ir/coinlist/list", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          page: 1,
+          limit: 1,
+          search: code,
+        }),
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Transaction Data:", data);
-          setTransactionData(data);
-          setLoading(false);
-          return;
-        } else if (response.status === 404 && attempt === retries - 1) {
-          console.log(`404: Transaction ID "${id}" not found.`);
-          setError(`Transaction data for ID "${id}" not found.`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Received transaction data:", data);
+        if (data.items && data.items.length > 0) {
+          const item = data.items[0];
+          setTransactionData({
+            name: item.fa_name,
+            code: item.currency_code,
+            change: item.daily_change_percent,
+            buy: item.buy_irt_price,
+            sell: item.sell_irt_price,
+            usd: item.price,
+            value: item.irt_price,
+          });
         } else {
-          console.log(`Attempt ${attempt + 1} failed. Retrying...`);
-          await new Promise((resolve) =>
-            setTimeout(resolve, 1000 * Math.pow(2, attempt))
-          ); // Exponential backoff
+          setError(`No data found for currency code: ${code}`);
         }
-      } catch (error) {
+      } else {
         console.error(
-          `Error fetching transaction data (attempt ${attempt + 1}):`,
-          error
+          "Failed to fetch transaction data. Status:",
+          response.status
         );
-        if (attempt === retries - 1) {
-          setError(
-            "An unexpected error occurred while fetching transaction data. Please try again later."
-          );
-        }
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        setError("Failed to fetch transaction data. Please try again later.");
       }
+    } catch (error) {
+      console.error("Error fetching transaction data:", error);
+      setError(
+        "An error occurred while fetching transaction data. Please try again later."
+      );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    const storedData = sessionStorage.getItem(`transaction_${id}`);
-    if (storedData) {
-      setTransactionData(JSON.parse(storedData));
-      setLoading(false);
-    } else {
-      fetchTransactionData();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (transactionData) {
-      sessionStorage.setItem(
-        `transaction_${id}`,
-        JSON.stringify(transactionData)
-      );
-    }
-  }, [transactionData, id]);
+    fetchTransactionData();
+  }, [code]);
 
   const handleRetry = () => {
     fetchTransactionData();
@@ -118,19 +119,11 @@ export default function TransactionComponent() {
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
         <div className="mt-4 flex space-x-4">
-          <Button
-            onClick={handleRetry}
-            variant="outline"
-            aria-label="Retry fetching transaction data"
-          >
+          <Button onClick={handleRetry} variant="outline">
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry
           </Button>
-          <Button
-            onClick={handleGoBack}
-            variant="outline"
-            aria-label="Go back to previous page"
-          >
+          <Button onClick={handleGoBack} variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
@@ -145,22 +138,14 @@ export default function TransactionComponent() {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>No Data</AlertTitle>
         <AlertDescription>
-          No transaction data found for the given ID.
+          No transaction data found for the given currency code.
         </AlertDescription>
         <div className="mt-4 flex space-x-4">
-          <Button
-            onClick={handleRetry}
-            variant="outline"
-            aria-label="Retry fetching transaction data"
-          >
+          <Button onClick={handleRetry} variant="outline">
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry
           </Button>
-          <Button
-            onClick={handleGoBack}
-            variant="outline"
-            aria-label="Go back to previous page"
-          >
+          <Button onClick={handleGoBack} variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
@@ -169,13 +154,21 @@ export default function TransactionComponent() {
     );
   }
 
-  const { name, change, buy, sell, code, usd, value } = transactionData;
+  const {
+    name,
+    change,
+    buy,
+    sell,
+    code: currencyCode,
+    usd,
+    value,
+  } = transactionData;
 
   return (
     <div className="flex flex-col justify-between items-center bg-[#FCFCFE] desktop:px-[150px] desktop:pt-[60px] tablet:px-[50px] tablet:pt-[22px] tablet:pb-[76px] px-[20px] pt-[40px] pb-[31px]">
       <TransactionFormComponent
         name={name}
-        code={code}
+        code={currencyCode}
         change={change}
         buy={buy}
         sell={sell}
@@ -183,7 +176,7 @@ export default function TransactionComponent() {
         value={value}
       />
       <TransactionFirstDescriptionComponent name={name} />
-      <TransactionChartComponent name={name} code={code} />
+      <TransactionChartComponent name={name} code={currencyCode} />
       <TransactionSecondDescriptionComponent name={name} />
       <TransactionQuestionComponent name={name} />
     </div>

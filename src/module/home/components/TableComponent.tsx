@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTransactionContext } from "@/context/TransactionContext";
 
 interface TableData {
   id: number;
@@ -47,53 +48,10 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const [totalItems2, setTotalItems2] = React.useState<number>(0);
 
   const [activeTab, setActiveTab] = React.useState<string>("دیفای");
-  const [Loading, setIsLoading] = React.useState<string | undefined>();
-
-  const handleTransaction = React.useCallback(
-    async (item: TableData) => {
-      const transactionId = item.code; // Assume this is a string
-      const transactionData = {
-        name: item.name,
-        code: item.code,
-        change: item.change,
-        buy: item.buy,
-        sell: item.sell,
-        usd: item.usd,
-        value: item.value,
-      };
-
-      setIsLoading(transactionId);
-
-      try {
-        const response = await fetch("/api/store-transaction", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: transactionId, data: transactionData }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log("Transaction data stored:", result);
-
-        sessionStorage.setItem(
-          `transaction_${transactionId}`,
-          JSON.stringify(transactionData)
-        );
-
-        router.push(`/transaction/${transactionId}`);
-      } catch (error) {
-        console.error("Error storing transaction data:", error);
-      } finally {
-        setIsLoading(undefined);
-      }
-    },
-    [router]
-  );
+  const { setTransactionData } = useTransactionContext();
+  const handleTransaction = (item: TableData) => {
+    router.push(`/transaction/${item.code}`);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);

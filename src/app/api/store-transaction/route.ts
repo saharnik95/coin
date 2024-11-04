@@ -17,7 +17,7 @@ export async function POST(request: NextRequest) {
     console.log(`Stored data for id: ${id}`, data);
 
     // Ensure data is stored before responding
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return NextResponse.json({ message: "Data stored successfully", data });
   } catch (error) {
