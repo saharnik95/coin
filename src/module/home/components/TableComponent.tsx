@@ -19,6 +19,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+const { toast } = useToast();
 
 interface TableData {
   id: number;
@@ -45,39 +47,56 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const [allData, setAllData] = React.useState<TableData[]>([]);
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [totalItems2, setTotalItems2] = React.useState<number>(0);
+  const [isLoading, setIsLoading] = React.useState<string | null>(null);
 
   const [activeTab, setActiveTab] = React.useState<string>("دیفای");
 
-  const handleTransaction = async (item: TableData) => {
-    const transactionId = `${item.code}`;
-    const transactionData = {
-      value: item.value,
-      name: item.name,
-      code: item.code,
-      change: item.change,
-      buy: item.buy,
-      sell: item.sell,
-      usd: item.usd,
-    };
+  const handleTransaction = React.useCallback(
+    async (item: TableData) => {
+      const transactionId = item.code;
+      const transactionData = {
+        name: item.name,
+        code: item.code,
+        change: item.change,
+        buy: item.buy,
+        sell: item.sell,
+        usd: item.usd,
+        value: item.value,
+      };
 
-    try {
-      const response = await fetch("/api/transaction-data", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: transactionId, data: transactionData }),
-      });
+      setIsLoading(transactionId);
 
-      if (response.ok) {
+      try {
+        const response = await fetch("/api/store-transaction", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: transactionId, data: transactionData }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Transaction data stored:", result);
+
+        // Navigate to the transaction page
         router.push(`/transaction/${transactionId}`);
-      } else {
-        console.error("Failed to store transaction data");
+      } catch (error) {
+        console.error("Error storing transaction data:", error);
+        toast({
+          title: "Error",
+          description: "Failed to store transaction data. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(null);
       }
-    } catch (error) {
-      console.error("Error storing transaction data:", error);
-    }
-  };
+    },
+    [router]
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);

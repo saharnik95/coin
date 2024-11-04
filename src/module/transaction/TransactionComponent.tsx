@@ -22,8 +22,6 @@ interface TransactionData {
   value: number;
 }
 
-const CACHE_EXPIRATION = 5 * 60 * 1000; // 5 minutes
-
 export default function TransactionComponent() {
   const [transactionData, setTransactionData] =
     useState<TransactionData | null>(null);
@@ -44,43 +42,17 @@ export default function TransactionComponent() {
       setLoading(true);
       setError(null);
 
-      // Try to get data from localStorage
-      const cachedData = localStorage.getItem(`transaction_${id}`);
-      if (cachedData) {
-        const { data, timestamp } = JSON.parse(cachedData);
-        if (Date.now() - timestamp < CACHE_EXPIRATION) {
-          console.log("Using cached data for", id);
-          setTransactionData(data);
-          setLoading(false);
-          return;
-        }
-      }
-
-      // Fetch from primary API
       console.log("Fetching transaction data for ID:", id);
       const response = await fetch(`/api/transaction-data?id=${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log("Received transaction data:", data);
         setTransactionData(data);
-        // Cache the data
-        localStorage.setItem(
-          `transaction_${id}`,
-          JSON.stringify({ data, timestamp: Date.now() })
-        );
       } else if (response.status === 404) {
-        // Fallback to external API
-        console.log(
-          "Data not found in primary API, fetching from external API"
-        );
+        console.log("Transaction data not found, fetching from external API");
         const externalData = await fetchExternalData(id);
         if (externalData) {
           setTransactionData(externalData);
-          // Cache the external data
-          localStorage.setItem(
-            `transaction_${id}`,
-            JSON.stringify({ data: externalData, timestamp: Date.now() })
-          );
         } else {
           setError(
             `Transaction data for ${id} not found. It may have expired or been removed.`
