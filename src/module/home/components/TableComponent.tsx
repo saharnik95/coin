@@ -50,7 +50,8 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const [activeTab, setActiveTab] = React.useState<string>("دیفای");
   const { setTransactionData } = useTransactionContext();
   const handleTransaction = (item: TableData) => {
-    router.push(`/transaction/${item.code}`);
+    const encodedCode = encodeURIComponent(item.code);
+    router.push(`/transaction/${encodedCode}`);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

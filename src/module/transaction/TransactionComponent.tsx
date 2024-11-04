@@ -29,7 +29,8 @@ export default function TransactionComponent() {
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
   const router = useRouter();
-  const code = params.id as string;
+  const encodedCode = params.id as string;
+  const code = decodeURIComponent(encodedCode);
 
   const fetchTransactionData = async () => {
     if (!code) {
