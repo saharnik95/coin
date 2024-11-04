@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
   if (data) {
     return NextResponse.json(data);
   } else {
+    // If data is not found, return a 404 status
     return NextResponse.json({ message: "Data not found" }, { status: 404 });
   }
 }

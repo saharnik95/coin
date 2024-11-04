@@ -22,6 +22,8 @@ interface TransactionData {
   value: number;
 }
 
+const CACHE_EXPIRATION = 5 * 60 * 1000; // 5 minutes
+
 export default function TransactionComponent() {
   const [transactionData, setTransactionData] =
     useState<TransactionData | null>(null);
@@ -41,27 +43,53 @@ export default function TransactionComponent() {
     try {
       setLoading(true);
       setError(null);
+
+      // Try to get data from localStorage
+      const cachedData = localStorage.getItem(`transaction_${id}`);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < CACHE_EXPIRATION) {
+          console.log("Using cached data for", id);
+          setTransactionData(data);
+          setLoading(false);
+          return;
+        }
+      }
+
+      // Fetch from primary API
       console.log("Fetching transaction data for ID:", id);
       const response = await fetch(`/api/transaction-data?id=${id}`);
       if (response.ok) {
         const data = await response.json();
         console.log("Received transaction data:", data);
         setTransactionData(data);
+        // Cache the data
+        localStorage.setItem(
+          `transaction_${id}`,
+          JSON.stringify({ data, timestamp: Date.now() })
+        );
       } else if (response.status === 404) {
-        console.error("Transaction data not found. Status:", response.status);
-        const errorText = await response.text();
-        console.error("Error response:", errorText);
-        setError(
-          `Transaction data for ${id} not found. It may have expired or been removed.`
+        // Fallback to external API
+        console.log(
+          "Data not found in primary API, fetching from external API"
         );
+        const externalData = await fetchExternalData(id);
+        if (externalData) {
+          setTransactionData(externalData);
+          // Cache the external data
+          localStorage.setItem(
+            `transaction_${id}`,
+            JSON.stringify({ data: externalData, timestamp: Date.now() })
+          );
+        } else {
+          setError(
+            `Transaction data for ${id} not found. It may have expired or been removed.`
+          );
+        }
       } else {
-        console.error(
-          "Failed to fetch transaction data. Status:",
-          response.status
+        throw new Error(
+          `Failed to fetch transaction data. Status: ${response.status}`
         );
-        const errorText = await response.text();
-        console.error("Error response:", errorText);
-        setError("Failed to fetch transaction data. Please try again later.");
       }
     } catch (error) {
       console.error("Error fetching transaction data:", error);
@@ -71,6 +99,31 @@ export default function TransactionComponent() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchExternalData = async (
+    coinId: string
+  ): Promise<TransactionData | null> => {
+    try {
+      const response = await fetch(
+        `https://api.coingecko.com/api/v3/coins/${coinId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          name: data.name,
+          code: data.symbol.toUpperCase(),
+          change: data.market_data.price_change_percentage_24h,
+          buy: data.market_data.current_price.usd,
+          sell: data.market_data.current_price.usd,
+          usd: data.market_data.current_price.usd,
+          value: data.market_data.current_price.usd,
+        };
+      }
+    } catch (error) {
+      console.error("Error fetching from external API:", error);
+    }
+    return null;
   };
 
   useEffect(() => {
