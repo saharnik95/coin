@@ -47,20 +47,36 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const [totalItems2, setTotalItems2] = React.useState<number>(0);
 
   const [activeTab, setActiveTab] = React.useState<string>("دیفای");
-  const handleTransaction = (item: TableData) => {
-    sessionStorage.setItem(
-      "transactionData",
-      JSON.stringify({
-        value: item.value,
-        name: item.name,
-        code: item.code,
-        change: item.change,
-        buy: item.buy,
-        sell: item.sell,
-        usd: item.usd,
-      })
-    );
-    router.push(`/transaction/${item.code}`);
+
+  const handleTransaction = async (item: TableData) => {
+    const transactionId = `${item.code}`;
+    const transactionData = {
+      value: item.value,
+      name: item.name,
+      code: item.code,
+      change: item.change,
+      buy: item.buy,
+      sell: item.sell,
+      usd: item.usd,
+    };
+
+    try {
+      const response = await fetch("/api/transaction-data", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: transactionId, data: transactionData }),
+      });
+
+      if (response.ok) {
+        router.push(`/transaction/${transactionId}`);
+      } else {
+        console.error("Failed to store transaction data");
+      }
+    } catch (error) {
+      console.error("Error storing transaction data:", error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
