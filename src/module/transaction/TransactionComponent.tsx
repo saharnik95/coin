@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, RefreshCcw, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import TransactionChartComponent from "./components/TransactionChartComponent";
 import TransactionFirstDescriptionComponent from "./components/TransactionFirstDescriptionComponent";
 import TransactionFormComponent from "./components/TransactionFormComponent";
@@ -27,48 +28,66 @@ export default function TransactionComponent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
 
-  useEffect(() => {
-    const fetchTransactionData = async () => {
-      if (!id) {
-        setError("No transaction ID provided");
-        setLoading(false);
-        return;
-      }
+  const fetchTransactionData = async () => {
+    if (!id) {
+      setError("No transaction ID provided");
+      setLoading(false);
+      return;
+    }
 
-      try {
-        console.log("Fetching transaction data for ID:", id);
-        const response = await fetch(`/api/transaction-data?id=${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Received transaction data:", data);
-          setTransactionData(data);
-        } else {
-          console.error(
-            "Failed to fetch transaction data. Status:",
-            response.status
-          );
-          const errorText = await response.text();
-          console.error("Error response:", errorText);
-          setError("Failed to fetch transaction data. Please try again later.");
-        }
-      } catch (error) {
-        console.error("Error fetching transaction data:", error);
+    try {
+      setLoading(true);
+      setError(null);
+      console.log("Fetching transaction data for ID:", id);
+      const response = await fetch(`/api/transaction-data?id=${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Received transaction data:", data);
+        setTransactionData(data);
+      } else if (response.status === 404) {
+        console.error("Transaction data not found. Status:", response.status);
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
         setError(
-          "An error occurred while fetching transaction data. Please try again later."
+          `Transaction data for ${id} not found. It may have expired or been removed.`
         );
-      } finally {
-        setLoading(false);
+      } else {
+        console.error(
+          "Failed to fetch transaction data. Status:",
+          response.status
+        );
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        setError("Failed to fetch transaction data. Please try again later.");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching transaction data:", error);
+      setError(
+        "An error occurred while fetching transaction data. Please try again later."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchTransactionData();
   }, [id]);
 
+  const handleRetry = () => {
+    fetchTransactionData();
+  };
+
+  const handleGoBack = () => {
+    router.back();
+  };
+
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 p-4">
         <Skeleton className="h-8 w-full" />
         <Skeleton className="h-64 w-full" />
         <Skeleton className="h-32 w-full" />
@@ -78,22 +97,42 @@ export default function TransactionComponent() {
 
   if (error) {
     return (
-      <Alert variant="destructive">
+      <Alert variant="destructive" className="m-4">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
+        <div className="mt-4 flex space-x-4">
+          <Button onClick={handleRetry} variant="outline">
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+          <Button onClick={handleGoBack} variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Go Back
+          </Button>
+        </div>
       </Alert>
     );
   }
 
   if (!transactionData) {
     return (
-      <Alert>
+      <Alert className="m-4">
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>No Data</AlertTitle>
         <AlertDescription>
           No transaction data found for the given ID.
         </AlertDescription>
+        <div className="mt-4 flex space-x-4">
+          <Button onClick={handleRetry} variant="outline">
+            <RefreshCcw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+          <Button onClick={handleGoBack} variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Go Back
+          </Button>
+        </div>
       </Alert>
     );
   }
