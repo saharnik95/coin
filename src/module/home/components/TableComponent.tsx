@@ -19,8 +19,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/hooks/use-toast";
-const { toast } = useToast();
 
 interface TableData {
   id: number;
@@ -86,11 +84,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
         router.push(`/transaction/${transactionId}`);
       } catch (error) {
         console.error("Error storing transaction data:", error);
-        toast({
-          title: "Error",
-          description: "Failed to store transaction data. Please try again.",
-          variant: "destructive",
-        });
+        // Removed toast notification
       } finally {
         setIsLoading(null);
       }
