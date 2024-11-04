@@ -31,76 +31,67 @@ export default function TransactionComponent() {
   const router = useRouter();
   const id = params.id as string;
 
-  const fetchTransactionData = async () => {
+  const fetchTransactionData = async (retries = 5) => {
     if (!id) {
       setError("No transaction ID provided");
       setLoading(false);
       return;
     }
 
-    try {
-      setLoading(true);
-      setError(null);
+    for (let attempt = 0; attempt < retries; attempt++) {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(`/api/transaction-data?id=${id}`);
 
-      console.log("Fetching transaction data for ID:", id);
-      const response = await fetch(`/api/transaction-data?id=${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Received transaction data:", data);
-        setTransactionData(data);
-      } else if (response.status === 404) {
-        console.log("Transaction data not found, fetching from external API");
-        const externalData = await fetchExternalData(id);
-        if (externalData) {
-          setTransactionData(externalData);
+        if (response.ok) {
+          const data = await response.json();
+          console.log("Transaction Data:", data);
+          setTransactionData(data);
+          setLoading(false);
+          return;
+        } else if (response.status === 404 && attempt === retries - 1) {
+          console.log(`404: Transaction ID "${id}" not found.`);
+          setError(`Transaction data for ID "${id}" not found.`);
         } else {
+          console.log(`Attempt ${attempt + 1} failed. Retrying...`);
+          await new Promise((resolve) =>
+            setTimeout(resolve, 1000 * Math.pow(2, attempt))
+          ); // Exponential backoff
+        }
+      } catch (error) {
+        console.error(
+          `Error fetching transaction data (attempt ${attempt + 1}):`,
+          error
+        );
+        if (attempt === retries - 1) {
           setError(
-            `Transaction data for ${id} not found. It may have expired or been removed.`
+            "An unexpected error occurred while fetching transaction data. Please try again later."
           );
         }
-      } else {
-        throw new Error(
-          `Failed to fetch transaction data. Status: ${response.status}`
-        );
       }
-    } catch (error) {
-      console.error("Error fetching transaction data:", error);
-      setError(
-        "An error occurred while fetching transaction data. Please try again later."
-      );
-    } finally {
-      setLoading(false);
     }
-  };
-
-  const fetchExternalData = async (
-    coinId: string
-  ): Promise<TransactionData | null> => {
-    try {
-      const response = await fetch(
-        `https://api.coingecko.com/api/v3/coins/${coinId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          name: data.name,
-          code: data.symbol.toUpperCase(),
-          change: data.market_data.price_change_percentage_24h,
-          buy: data.market_data.current_price.usd,
-          sell: data.market_data.current_price.usd,
-          usd: data.market_data.current_price.usd,
-          value: data.market_data.current_price.usd,
-        };
-      }
-    } catch (error) {
-      console.error("Error fetching from external API:", error);
-    }
-    return null;
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchTransactionData();
+    const storedData = sessionStorage.getItem(`transaction_${id}`);
+    if (storedData) {
+      setTransactionData(JSON.parse(storedData));
+      setLoading(false);
+    } else {
+      fetchTransactionData();
+    }
   }, [id]);
+
+  useEffect(() => {
+    if (transactionData) {
+      sessionStorage.setItem(
+        `transaction_${id}`,
+        JSON.stringify(transactionData)
+      );
+    }
+  }, [transactionData, id]);
 
   const handleRetry = () => {
     fetchTransactionData();
@@ -127,11 +118,19 @@ export default function TransactionComponent() {
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>{error}</AlertDescription>
         <div className="mt-4 flex space-x-4">
-          <Button onClick={handleRetry} variant="outline">
+          <Button
+            onClick={handleRetry}
+            variant="outline"
+            aria-label="Retry fetching transaction data"
+          >
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry
           </Button>
-          <Button onClick={handleGoBack} variant="outline">
+          <Button
+            onClick={handleGoBack}
+            variant="outline"
+            aria-label="Go back to previous page"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>
@@ -149,11 +148,19 @@ export default function TransactionComponent() {
           No transaction data found for the given ID.
         </AlertDescription>
         <div className="mt-4 flex space-x-4">
-          <Button onClick={handleRetry} variant="outline">
+          <Button
+            onClick={handleRetry}
+            variant="outline"
+            aria-label="Retry fetching transaction data"
+          >
             <RefreshCcw className="mr-2 h-4 w-4" />
             Retry
           </Button>
-          <Button onClick={handleGoBack} variant="outline">
+          <Button
+            onClick={handleGoBack}
+            variant="outline"
+            aria-label="Go back to previous page"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Go Back
           </Button>

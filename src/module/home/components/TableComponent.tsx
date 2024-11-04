@@ -45,13 +45,13 @@ export default function ResponsiveTabbedTablesWithAccordion() {
   const [allData, setAllData] = React.useState<TableData[]>([]);
   const [totalItems, setTotalItems] = React.useState<number>(0);
   const [totalItems2, setTotalItems2] = React.useState<number>(0);
-  const [isLoading, setIsLoading] = React.useState<string | null>(null);
 
   const [activeTab, setActiveTab] = React.useState<string>("دیفای");
+  const [Loading, setIsLoading] = React.useState<string | undefined>();
 
   const handleTransaction = React.useCallback(
     async (item: TableData) => {
-      const transactionId = item.code;
+      const transactionId = item.code; // Assume this is a string
       const transactionData = {
         name: item.name,
         code: item.code,
@@ -80,13 +80,16 @@ export default function ResponsiveTabbedTablesWithAccordion() {
         const result = await response.json();
         console.log("Transaction data stored:", result);
 
-        // Navigate to the transaction page
+        sessionStorage.setItem(
+          `transaction_${transactionId}`,
+          JSON.stringify(transactionData)
+        );
+
         router.push(`/transaction/${transactionId}`);
       } catch (error) {
         console.error("Error storing transaction data:", error);
-        // Removed toast notification
       } finally {
-        setIsLoading(null);
+        setIsLoading(undefined);
       }
     },
     [router]

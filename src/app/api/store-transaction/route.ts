@@ -1,6 +1,6 @@
 // File: src/app/api/store-transaction/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import transactionStore from "@/app/api/transaction-store"; // Import the shared store
+import transactionStore from "@/app/api/transaction-store";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,9 +13,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    transactionStore.set(id, data); // Store data
+    transactionStore.set(id, data);
     console.log(`Stored data for id: ${id}`, data);
-    return NextResponse.json({ message: "Data stored successfully" });
+
+    // Ensure data is stored before responding
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    return NextResponse.json({ message: "Data stored successfully", data });
   } catch (error) {
     console.error("Error storing transaction data:", error);
     return NextResponse.json(
