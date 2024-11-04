@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import TransactionChartComponent from "./components/TransactionChartComponent";
 import TransactionFirstDescriptionComponent from "./components/TransactionFirstDescriptionComponent";
 import TransactionFormComponent from "./components/TransactionFormComponent";
@@ -21,12 +24,19 @@ interface TransactionData {
 export default function TransactionComponent() {
   const [transactionData, setTransactionData] =
     useState<TransactionData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const params = useParams();
   const id = params.id as string;
 
   useEffect(() => {
     const fetchTransactionData = async () => {
+      if (!id) {
+        setError("No transaction ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
         console.log("Fetching transaction data for ID:", id);
         const response = await fetch(`/api/transaction-data?id=${id}`);
@@ -41,27 +51,51 @@ export default function TransactionComponent() {
           );
           const errorText = await response.text();
           console.error("Error response:", errorText);
-          setError("Failed to fetch transaction data. Please try again.");
+          setError("Failed to fetch transaction data. Please try again later.");
         }
       } catch (error) {
         console.error("Error fetching transaction data:", error);
         setError(
-          "An error occurred while fetching transaction data. Please try again."
+          "An error occurred while fetching transaction data. Please try again later."
         );
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (id) {
-      fetchTransactionData();
-    }
+    fetchTransactionData();
   }, [id]);
 
+  if (loading) {
+    return (
+      <div className="space-y-4">
+        <Skeleton className="h-8 w-full" />
+        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
+
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
   }
 
   if (!transactionData) {
-    return <div>Loading...</div>;
+    return (
+      <Alert>
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>No Data</AlertTitle>
+        <AlertDescription>
+          No transaction data found for the given ID.
+        </AlertDescription>
+      </Alert>
+    );
   }
 
   const { name, change, buy, sell, code, usd, value } = transactionData;
