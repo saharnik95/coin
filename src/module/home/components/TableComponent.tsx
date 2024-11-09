@@ -255,7 +255,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                 {headers.map((header, index) => (
                   <TableHead
                     key={index}
-                    className={`text-black font-normal text-base leading-[25px] flex items-center ${
+                    className={`text-black font-normal desktop:text-base desktop:leading-[25px] tablet:text-sm tablet:leading-[22px] flex items-center ${
                       index === 0
                         ? "justify-start w-[150px] desktop:pr-[46px] tablet:pr-[28px]" // Smaller width for the first cell
                         : "flex-grow justify-center pl-4"
