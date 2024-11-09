@@ -31,6 +31,8 @@ interface TableData {
   enName: string;
   code: string;
   usd: number;
+  pic: string;
+  about: string;
 }
 
 interface TableInfo {
@@ -105,6 +107,8 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       enName: item.en_name,
       code: item.currency_code,
       usd: item.price,
+      pic: item.icon,
+      about: item.about,
     }));
   }, []);
 
@@ -257,7 +261,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                     key={index}
                     className={`text-black font-normal desktop:text-base desktop:leading-[25px] tablet:text-sm tablet:leading-[22px] flex items-center ${
                       index === 0
-                        ? "justify-start w-[150px] desktop:pr-[46px] tablet:pr-[28px]" // Smaller width for the first cell
+                        ? "justify-start w-[150px] desktop:pr-[46px] tablet:pr-[28px]"
                         : "flex-grow justify-center pl-4"
                     }`}
                   >
@@ -289,13 +293,13 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                   key={item.id}
                   className={`flex ${index % 2 === 0 ? "bg-[#F7F7F7]" : ""}`}
                 >
-                  <TableCell className="flex items-center desktop:w-[150px] tablet:w-[138px] tablet:pr-[11px] desktop:pr-[15px]">
+                  <TableCell className="flex items-center desktop:w-[155px] tablet:w-[138px] tablet:pr-[11px] desktop:pr-[15px]">
                     {" "}
                     {/* Adjust width for alignment */}
                     <div className="flex items-center desktop:gap-[9px] tablet:gap-[6px]">
                       <Image
-                        src="/images/home/table/currencies/bitcoin.svg"
-                        alt="bitcoin"
+                        src={item.pic}
+                        alt={item.enName}
                         className="tablet:w-[33px] tablet:h-[33px] desktop:w-[37px] desktop:h-[37px] "
                         width={32}
                         height={32}
@@ -392,8 +396,8 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                     <TableCell className="text-start items-center text-black font-normal text-xs tablet:text-base pr-[14px] w-1/3">
                       <div className="flex">
                         <Image
-                          src="/images/home/table/currencies/bitcoin.svg"
-                          alt="bitcoin"
+                          src={item.pic}
+                          alt={item.enName}
                           className="tablet:w-[33px] tablet:h-[33px] pl-[6px] desktop:pl-[8px]"
                           width={33}
                           height={33}

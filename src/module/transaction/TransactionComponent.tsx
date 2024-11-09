@@ -20,6 +20,8 @@ interface TransactionData {
   sell: number;
   usd: number;
   value: number;
+  pic: string;
+  about: string;
 }
 
 export default function TransactionComponent() {
@@ -68,6 +70,8 @@ export default function TransactionComponent() {
             sell: item.sell_irt_price,
             usd: item.price,
             value: item.irt_price,
+            pic: item.icon,
+            about: item.about,
           });
         } else {
           setError(`No data found for currency code: ${code}`);
@@ -163,6 +167,8 @@ export default function TransactionComponent() {
     code: currencyCode,
     usd,
     value,
+    pic,
+    about,
   } = transactionData;
 
   return (
@@ -175,10 +181,11 @@ export default function TransactionComponent() {
         sell={sell}
         usd={usd}
         value={value}
+        pic={pic}
       />
-      <TransactionFirstDescriptionComponent name={name} />
+      <TransactionFirstDescriptionComponent name={name} about={about} />
       <TransactionChartComponent name={name} code={currencyCode} />
-      <TransactionSecondDescriptionComponent name={name} />
+      <TransactionSecondDescriptionComponent name={name} about={about} />
       <TransactionQuestionComponent name={name} />
     </div>
   );

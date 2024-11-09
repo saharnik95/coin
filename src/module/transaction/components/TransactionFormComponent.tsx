@@ -4,12 +4,13 @@ import Formschema from "@/module/transaction/components/Formschema";
 
 interface TransactionFormComponentProps {
   name?: string;
-  code?: string;
+  code: string;
   change?: number;
   buy?: number;
   sell?: number;
   usd?: number;
   value?: number;
+  pic: string;
 }
 function formatNumberWithCommas(number: number) {
   if (isNaN(number)) return number;
@@ -24,6 +25,7 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
   sell,
   usd,
   value,
+  pic,
 }) => {
   return (
     <div className=" bg-white shadow-custom w-full rounded-[30px] flex flex-col tablet:flex-row desktop:py-[29px] desktop:px-[33px] tablet:py-[45px] tablet:px-[25px] py-[32px] px-[22px] desktop:gap-[45px] tablet:gap-[28px] gap-[26px]">
@@ -38,8 +40,8 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
           <div className="flex flex-row">
             <div>
               <Image
-                src="/images/home/table/currencies/bitcoin.svg"
-                alt={"bitcoin"}
+                src={pic}
+                alt={code}
                 className={
                   "desktop:w-[73px] desktop:h-[73px] tablet:w-[61px] tablet:h-[61px] w-[43px] h-[43px] pl-[6px] desktop:pl-[8px]"
                 }
