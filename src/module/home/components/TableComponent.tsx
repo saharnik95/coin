@@ -249,33 +249,33 @@ export default function ResponsiveTabbedTablesWithAccordion() {
     (table: TableInfo) => {
       return (
         <div className="rounded-lg desktop:mt-[40px] mt-[15px]">
-          <Table>
+          <Table className="w-full">
             <TableHeader>
-              <TableRow className="bg-[#E3E7EC]">
+              <TableRow className="bg-[#E3E7EC] flex">
                 {headers.map((header, index) => (
                   <TableHead
                     key={index}
-                    className={`text-black text-center font-normal desktop:text-base desktop:leading-[25px] leading-[22px] text-[14px] text-nowrap ${
+                    className={`text-black font-normal text-base leading-[25px] flex items-center ${
                       index === 0
-                        ? "text-right desktop:pr-[46px] tablet:pr-[24px]"
-                        : ""
+                        ? "justify-start w-[150px] desktop:pr-[46px] tablet:pr-[28px]" // Smaller width for the first cell
+                        : "flex-grow justify-center pl-4"
                     }`}
                   >
                     {header.label}
                   </TableHead>
                 ))}
-                <TableHead className="flex justify-end items-center desktop:pl-[20px] tablet:pl-[14px]">
-                  <div className="bg-white flex gap-x-2 items-center desktop:p-[24px] desktop:w-[244px] desktop:h-[63px] tablet:w-[130px] tablet:p-[16px] tablet:h-[47px] rounded-lg">
+                <TableHead className="flex-grow-0 flex justify-end items-center desktop:pl-5 tablet:pl-[14px] desktop:w-[264px] tablet:w-[144px]">
+                  <div className="bg-white flex gap-x-2 items-center p-4 w-full desktop:h-[63px] tablet:h-[47px] rounded-lg">
                     <Image
                       src="/images/home/table/magnifier/Frame.svg"
                       alt="search"
-                      className="w-[16px] h-[16px]"
+                      className="w-4 h-4"
                       width={16}
                       height={16}
                     />
                     <input
                       placeholder="جستجو......."
-                      className="text-[#696464] font-normal outline-none w-[60px]"
+                      className="text-[#696464] font-normal outline-none w-full"
                       value={searchTerm}
                       onChange={handleChange}
                     />
@@ -287,48 +287,49 @@ export default function ResponsiveTabbedTablesWithAccordion() {
               {allData.map((item, index) => (
                 <TableRow
                   key={item.id}
-                  className={index % 2 === 0 ? "bg-[#F7F7F7]" : ""}
+                  className={`flex ${index % 2 === 0 ? "bg-[#F7F7F7]" : ""}`}
                 >
-                  <TableCell className="justify-start flex items-center desktop:pr-[15px] tablet:pr-[11px]">
-                    <div className="flex items-center justify-center">
+                  <TableCell className="flex items-center desktop:w-[150px] tablet:w-[138px] tablet:pr-[11px] desktop:pr-[15px]">
+                    {" "}
+                    {/* Adjust width for alignment */}
+                    <div className="flex items-center desktop:gap-[9px] tablet:gap-[6px]">
                       <Image
                         src="/images/home/table/currencies/bitcoin.svg"
                         alt="bitcoin"
-                        className="tablet:w-[33px] tablet:h-[33px] pl-[6px] desktop:pl-[8px]"
-                        width={20}
-                        height={20}
+                        className="tablet:w-[33px] tablet:h-[33px] desktop:w-[37px] desktop:h-[37px] "
+                        width={32}
+                        height={32}
                       />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="text-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[12px] text-[12px] text-nowrap">
-                        {item.name}
-                      </div>
-                      <div className="font-normal text-[#696464] desktop:leading-[22px] desktop:text-[14px] leading-[12px] text-[12px]">
-                        {item.code}
+                      <div className="flex flex-col desktop:gap-1 tablet:gap-[5px]">
+                        <div className="text-black font-medium desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px]">
+                          {item.name}
+                        </div>
+                        <div className="text-[#696464] text-xs font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px]">
+                          {item.code}
+                        </div>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px] text-nowrap">
+                  <TableCell className="flex-grow flex justify-center items-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px]">
                     ${formatNumberWithCommas(item.value)}
                   </TableCell>
                   <TableCell
-                    dir="ltr"
-                    className={`text-center font-normal tablet:leading-[22px] desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px] text-nowrap ${
+                    className={`flex-grow flex justify-center items-center font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px] ${
                       item.change > 0 ? "text-[#147D03]" : "text-[#EF4040]"
                     }`}
                   >
                     {item.change}%
                   </TableCell>
-                  <TableCell className="text-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px] text-nowrap">
+                  <TableCell className="flex-grow flex justify-center items-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px]">
                     {formatNumberWithCommas(item.sell)} تومان
                   </TableCell>
-                  <TableCell className="text-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px] text-nowrap">
+                  <TableCell className="flex-grow flex justify-center items-center text-black font-normal desktop:leading-[22px] desktop:text-[14px] leading-[18.78px] text-[12px]">
                     {formatNumberWithCommas(item.buy)} تومان
                   </TableCell>
-                  <TableCell className="flex justify-end items-center tablet:pl-[14px] desktop:pl-[65px]">
+                  <TableCell className="flex-grow-0 flex justify-end desktop:justify-center items-center desktop:pl-5 tablet:pl-[14px] desktop:w-[264px] tablet:w-[144px]">
                     <button
                       onClick={() => handleTransaction(item)}
-                      className="bg-[#1652F0] text-white text-center rounded-lg font-black flex items-center justify-center tablet:w-[130px] tablet:p-[16px] tablet:h-[47px]"
+                      className="bg-[#1652F0] text-white text-center rounded-lg font-bold w-[130px] h-[47px] py-3 px-4"
                     >
                       معامله
                     </button>
