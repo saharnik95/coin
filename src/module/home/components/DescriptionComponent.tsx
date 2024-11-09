@@ -1,36 +1,29 @@
 import Image from "next/image";
 import { homeMock } from "@/module/mock/home/home";
 
-const DescriptionComponent: React.FC = () => {
+export default function DescriptionComponent() {
   return (
-    <div className="flex flex-col ">
-      <h4
-        className="desktop:mb-[40px] tablet:mb-[25px] mb-[19px] text-right text-black 
-      font-black tablet:text-2xl  tablet:leading-[38px] leading-[31px] text-xl  "
-      >
+    <div className="flex flex-col">
+      <h4 className="mb-[19px] text-right text-black font-black text-xl leading-[31px] tablet:mb-[25px] tablet:text-2xl tablet:leading-[38px] desktop:mb-[40px]">
         توضیحات کلی در مورد رمز ارزها
       </h4>
-      <p className="font-normal desktop:text-base desktop:leading-[32px] tablet:text-sm tablet:leading-[28px] leading-[24px] text-xs text-justify ">
+      <p className="text-justify text-xs leading-[24px] font-normal tablet:text-sm tablet:leading-[28px] desktop:text-base desktop:leading-[32px]">
         {homeMock.Firstabout}
       </p>
 
-      <div className="flex justify-center items-center desktop:py-[66px] tablet:py-[53px] py-[26px] ">
+      <div className="flex justify-center items-center py-[26px] tablet:py-[53px] desktop:py-[66px]">
         <Image
           src={homeMock.PicUrl}
-          alt={"pic"}
-          className={
-            " w-[325px] h-[335px] tablet:w-[731px] tablet:h-[411px] desktop:w-[750px] desktop:h-[422px] "
-          }
-          width={325}
-          height={335}
+          alt="Cryptocurrency illustration"
+          className="w-[325px] h-[335px] rounded-[30px] tablet:w-[731px] tablet:h-[411px] desktop:w-[750px] desktop:h-[422px]"
+          width={750}
+          height={422}
         />
       </div>
 
-      <p className="font-normal desktop:text-base desktop:leading-[32px] tablet:text-sm tablet:leading-[28px] leading-[24px] text-xs text-justify ">
-        {homeMock.Seconstabout}
+      <p className="text-justify text-xs leading-[24px] font-normal tablet:text-sm tablet:leading-[28px] desktop:text-base desktop:leading-[32px]">
+        {homeMock.Secondabout}
       </p>
     </div>
   );
-};
-
-export default DescriptionComponent;
+}

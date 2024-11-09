@@ -1,5 +1,5 @@
 "use client";
-import "@/module/core/styles/globals.css";
+
 import React from "react";
 import { Line } from "react-chartjs-2";
 import {
@@ -13,7 +13,6 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { ChartOptions, LegendItem } from "chart.js";
 
 ChartJS.register(
   CategoryScale,
@@ -33,7 +32,7 @@ interface TransactionChartComponentProps {
 
 type TimePeriod = "24h" | "1w" | "1m" | "1y";
 
-const timeLabels = {
+const timeLabels: Record<TimePeriod, string[]> = {
   "24h": Array.from({ length: 24 }, (_, i) => `${(i + 19) % 24}:29`),
   "1w": [
     "sun",
@@ -61,13 +60,15 @@ const timeLabels = {
 };
 
 export default function TransactionChartComponent({
-  name,
-  code,
-}: TransactionChartComponentProps = {}) {
+  name = "بیت کوین",
+  code = "BTC",
+}: TransactionChartComponentProps) {
   const [period, setPeriod] = React.useState<TimePeriod>("24h");
-  const [currencyPrices, setCurrencyPrices] = React.useState<number[]>([]);
-  const [usdPrices, setUsdPrices] = React.useState<number[]>([]);
-  const [equality, setEquality] = React.useState<number[]>([]);
+  const [chartData, setChartData] = React.useState<{
+    currencyPrices: number[];
+    usdPrices: number[];
+    equality: number[];
+  }>({ currencyPrices: [], usdPrices: [], equality: [] });
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -78,9 +79,11 @@ export default function TransactionChartComponent({
           body: JSON.stringify({ period: period, currency_code: code }),
         });
         const data = await response.json();
-        setCurrencyPrices(data.items.map((item: any) => item.price));
-        setUsdPrices(data.items.map((item: any) => item.usd_price));
-        setEquality(data.items.map((item: any) => item.irt_price));
+        setChartData({
+          currencyPrices: data.items.map((item: any) => item.price),
+          usdPrices: data.items.map((item: any) => item.usd_price),
+          equality: data.items.map((item: any) => item.irt_price),
+        });
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -88,12 +91,12 @@ export default function TransactionChartComponent({
     fetchData();
   }, [code, period]);
 
-  const chartData = {
+  const topChartData = {
     labels: timeLabels[period],
     datasets: [
       {
         label: "برابری",
-        data: equality,
+        data: chartData.equality,
         borderColor: "rgba(22, 82, 240, 1)",
         backgroundColor: "rgba(59, 130, 246, 0.5)",
         borderWidth: 1,
@@ -102,9 +105,9 @@ export default function TransactionChartComponent({
       },
       {
         label: `قیمت ${name}`,
-        data: currencyPrices,
+        data: chartData.currencyPrices,
         borderColor: "rgba(247, 147, 26, 1)",
-        backgroundColor: "rgba(247, 147, 26, 0.2)",
+        backgroundColor: "rgba(254,244,232,255)",
         pointRadius: 0,
         borderWidth: 1,
         fill: true,
@@ -118,9 +121,9 @@ export default function TransactionChartComponent({
     datasets: [
       {
         label: "نرخ دلار",
-        data: usdPrices,
+        data: chartData.usdPrices,
         borderColor: "rgba(75, 181, 67, 1)",
-        backgroundColor: "rgba(75, 181, 67, 0.2)",
+        backgroundColor: "rgba(246,253,246,255)",
         fill: true,
         pointRadius: 0,
         borderWidth: 1,
@@ -128,46 +131,29 @@ export default function TransactionChartComponent({
     ],
   };
 
-  const topChartOptions: ChartOptions<"line"> = {
+  const topChartOptions: any = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: {
       mode: "index",
       intersect: false,
     },
     plugins: {
       title: { display: false },
-      legend: {
-        position: "bottom",
-        rtl: true,
-        labels: {
-          font: { family: "font-iran, sans-serif" },
-          usePointStyle: true,
-          pointStyle: "circle",
-          generateLabels: (chart: ChartJS): LegendItem[] => {
-            const datasets = chart.data.datasets;
-            return datasets.map((dataset, i) => ({
-              text: dataset.label || "", // Ensure text is a string, defaulting to an empty string if undefined
-              fillStyle: dataset.borderColor as string,
-              strokeStyle: dataset.borderColor as string,
-              hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i,
-            }));
-          },
-        },
-      },
+      legend: { display: false },
     },
     scales: {
       x: {
-        display: true,
+        display: false,
         grid: { display: false },
       },
       y: {
         type: "linear",
         display: true,
         position: "right",
-        grid: { drawOnChartArea: true, drawTicks: true, display: true },
+        grid: { drawOnChartArea: true, drawTicks: true, display: true, z: 10 },
         ticks: {
-          callback: (value) => (Number(value) / 1000000000).toFixed(3) + "M",
+          callback: (value: number) => (value / 1000000000).toFixed(3) + "M",
         },
       },
       y1: {
@@ -176,41 +162,22 @@ export default function TransactionChartComponent({
         position: "left",
         grid: { drawOnChartArea: false },
         ticks: {
-          callback: (value) => (Number(value) / 1000).toFixed(0) + "k",
+          callback: (value: number) => (value / 1000).toFixed(0) + "k",
         },
       },
     },
   };
 
-  const bottomChartOptions: ChartOptions<"line"> = {
-    maintainAspectRatio: false, // Set this to false to allow custom height
-    aspectRatio: 10,
+  const bottomChartOptions: any = {
     responsive: true,
+    maintainAspectRatio: false,
     interaction: {
       mode: "index",
       intersect: false,
     },
     plugins: {
       title: { display: false },
-      legend: {
-        position: "bottom",
-        rtl: true,
-        labels: {
-          font: { family: "font-iran, sans-serif" },
-          usePointStyle: true,
-          pointStyle: "circle",
-          generateLabels: (chart: ChartJS): LegendItem[] => {
-            const datasets = chart.data.datasets;
-            return datasets.map((dataset, i) => ({
-              text: dataset.label || "", // Ensure text is a string, defaulting to an empty string if undefined
-              fillStyle: dataset.borderColor as string,
-              strokeStyle: dataset.borderColor as string,
-              hidden: !chart.isDatasetVisible(i),
-              datasetIndex: i,
-            }));
-          },
-        },
-      },
+      legend: { display: false },
     },
     scales: {
       x: {
@@ -221,19 +188,15 @@ export default function TransactionChartComponent({
         type: "linear",
         display: true,
         position: "right",
-
         grid: {
           drawOnChartArea: true,
           drawTicks: false,
           display: true,
         },
         ticks: {
-          callback: (value) => (Number(value) / 1000).toFixed(0) + "k",
-          maxTicksLimit: 10, // حداکثر تعداد تقسیمات
+          callback: (value: number) => (value / 1000).toFixed(0) + "k",
+          maxTicksLimit: 10,
           count: 1,
-        },
-        afterFit: (scaleInstance: any) => {
-          scaleInstance.height = 80;
         },
       },
     },
@@ -245,14 +208,19 @@ export default function TransactionChartComponent({
         نمودار قیمت {name} و نرخ برابری تومان
       </h2>
       <div className="bg-white shadow-custom rounded-[30px]">
-        <div className="w-full max-w-4xl mx-auto p-4 rtl" dir="rtl">
-          <div className="rounded-lg border p-4">
-            <div className="flex justify-start gap-[30px] mb-4">
-              {["24h", "1w", "1m", "1y"].map((p) => (
+        <div
+          className="w-full  desktop:pt-[20px] desktop:pb-[11px] desktop:px-[66px] 
+        tablet:pt-[12px] tablet:pb-[9px] tablet:px-[40px]  pt-[21px] pb-[34px] px-[21px]
+         rtl"
+          dir="rtl"
+        >
+          <div className="rounded-lg ">
+            <div className="flex justify-start desktop:gap-[30px] tablet:gap-[8px] gap-[19px] desktop:mb-[23px] tablet:mb-[8px] mb-[21px]">
+              {(Object.keys(timeLabels) as TimePeriod[]).map((p) => (
                 <button
                   key={p}
-                  onClick={() => setPeriod(p as TimePeriod)}
-                  className={`font-normal desktop:text-[12px] desktop:leading-[18px] w-[48px] ${
+                  onClick={() => setPeriod(p)}
+                  className={`font-normal text-[12px] leading-[18px] w-[48px] ${
                     period === p ? "text-[#0D1A8E]" : "text-[#696464]"
                   }`}
                 >
@@ -266,15 +234,36 @@ export default function TransactionChartComponent({
                 </button>
               ))}
             </div>
-            <div className="space-y-4">
-              <Line
-                options={topChartOptions}
-                data={chartData}
-                className="z-8"
-              ></Line>
-              <div className="w-full ">
+            <div className="space-y-[58px] tablet:space-y-[34px] desktop:space-y-[53px]">
+              <div className="desktop:h-[404px] tablet:h-[259px] h-[233px] ">
+                <Line options={topChartOptions} data={topChartData} />
+              </div>
+              <div
+                className="desktop:h-[135px] tablet:h-[87px] h-[99px]  border-b-[2.5px] tablet:border-b-[1px] border-[#F1F1F1]
+              pb-[11px] tablet:pb-[3px] desktop:pb-[15px]"
+              >
                 <Line options={bottomChartOptions} data={bottomChartData} />
-              </div>{" "}
+              </div>
+            </div>
+            <div className="flex justify-center items-center mt-[22px] tablet:mt-[6px] desktop:mt-[14px] rtl-space-x-reverse">
+              {[
+                { color: "rgba(75,181,67,1)", label: "نرخ دلار" },
+                { color: "rgba(22,82,240,1)", label: "برابری" },
+                { color: "rgba(247,147,26,1)", label: `قیمت ${name}` },
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center desktop:pl-[57px] pl-[23px]"
+                >
+                  <div
+                    className="desktop:w-[10px] desktop:h-[10px] w-[7px] h-[7px] rounded-full ml-2"
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span className="text-xs font-extralight leading-[18.78px]">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>

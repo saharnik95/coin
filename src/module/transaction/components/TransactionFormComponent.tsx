@@ -52,7 +52,7 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
                 {" "}
                 {name}
               </h5>
-              <h6 className="text-[#696464]  leading-[22px] text-[14px] ">
+              <h6 className="text-[#696464]  desktop:leading-[28px] desktop:text-[18px] text-[14px] leading-[22px] ">
                 {code}
               </h6>
             </div>
@@ -61,7 +61,7 @@ const TransactionFormComponent: React.FC<TransactionFormComponentProps> = ({
             <h5 className="text-black  font-semibold desktop:text-[16px] desktop:leading-[25px]  leading-[22px] text-[14px] ">
               {formatNumberWithCommas(value ?? 0)} تومان
             </h5>
-            <h5 className="text-[#696464]  leading-[22px] text-[14px] text-left ">
+            <h5 className="text-[#696464]  desktop:leading-[27px] desktop:text-[18px] leading-[22px] text-[14px] text-left ">
               ${formatNumberWithCommas(usd ?? 0)}
             </h5>
           </div>

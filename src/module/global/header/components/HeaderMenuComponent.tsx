@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Menubar,
@@ -15,11 +17,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import Image from "next/image";
+import { headerMock } from "@/module/mock/header/header";
 
 export default function HeaderMenuComponent() {
-  const menuItems = ["صفحه اصلی", "قیمت رمزارزها", "مقالات", "تماس با ما"];
-
   const MenuContent = React.forwardRef<
     HTMLDivElement,
     React.ComponentPropsWithoutRef<typeof MenubarContent>
@@ -28,12 +28,12 @@ export default function HeaderMenuComponent() {
       ref={ref}
       align="start"
       alignOffset={-8}
-      className="w-[180px] "
+      className="w-[180px]"
       {...props}
     >
-      {menuItems.map((item) => (
-        <MenubarItem key={item} className="cursor-pointer ">
-          {item}
+      {headerMock.menuItems.map((item) => (
+        <MenubarItem key={item.id} className="cursor-pointer">
+          <Link href={item.alt ? `/${item.alt}` : "/"}>{item.name}</Link>
         </MenubarItem>
       ))}
     </MenubarContent>
@@ -43,11 +43,11 @@ export default function HeaderMenuComponent() {
   return (
     <div className="relative flex items-center">
       {/* Desktop Menu */}
-      <Menubar className="hidden p-0 tablet:flex justify- items-center border-none bg-transparent">
-        {menuItems.map((item) => (
-          <MenubarMenu key={item}>
-            <MenubarTrigger className="cursor-pointer desktop:text-base  desktop:leading-[25px] tablet:leading-[22px] leading-[18px] tablet:text-sm text-xsm ">
-              {item}
+      <Menubar className="hidden p-0 tablet:flex justify-items-center border-none bg-transparent">
+        {headerMock.menuItems.map((item) => (
+          <MenubarMenu key={item.id}>
+            <MenubarTrigger className="cursor-pointer desktop:text-base desktop:leading-[25px] tablet:leading-[22px] leading-[18px] tablet:text-sm text-xsm">
+              <Link href={item.alt ? `/${item.alt}` : "/"}>{item.name}</Link>
             </MenubarTrigger>
           </MenubarMenu>
         ))}
@@ -64,22 +64,22 @@ export default function HeaderMenuComponent() {
             <div className="border-[1px] border-black border-solid rounded-[7px] p-2">
               <Image
                 src="/images/header/menu/menu.svg"
-                alt={"menu"}
-                className={" w-[16px] h-[16px]   "}
+                alt="menu"
+                className="w-[16px] h-[16px]"
                 width={16}
                 height={16}
               />
             </div>
-            <span className="sr-only ">Toggle menu</span>
+            <span className="sr-only">Toggle menu</span>
           </Button>
         </SheetTrigger>
-        <SheetTitle></SheetTitle>
+        <SheetTitle />
         <SheetContent side="right" className="w-[180px] sm:w-[240px]">
           <nav className="flex flex-col gap-4 mt-8">
-            {menuItems.map((item) => (
-              <a key={item} className="" href="#">
-                {item}
-              </a>
+            {headerMock.menuItems.map((item) => (
+              <Link key={item.id} href={item.alt ? `/${item.alt}` : "/"}>
+                {item.name}
+              </Link>
             ))}
           </nav>
         </SheetContent>

@@ -10,7 +10,7 @@ const HomeComponent: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-between items-center bg-white desktop:gap-y-[163px] tablet:gap-y-[90px] gap-y-[70px]  desktop:px-[150px] desktop:py-[96px] tablet:px-[50px] tablet:py-[60px] px-[20px] py-[50px] ">
-      <div className="">
+      <div className="w-full">
         <QueryClientProvider client={queryClient}>
           <TransactionProvider>
             <ResponsiveTabbedTablesWithAccordion />

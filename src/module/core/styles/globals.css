@@ -130,3 +130,7 @@ body {
 .input {
   color: #696464;
 }
+th {
+  margin: 0;
+  padding: 0;
+}
