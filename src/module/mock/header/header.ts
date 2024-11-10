@@ -52,5 +52,10 @@ export const headerMock: HeaderMock = {
       name: "تماس با ما",
       alt: "about",
     },
+    {
+      id: 5,
+      name: "  سایر",
+      alt: "others",
+    },
   ],
 };

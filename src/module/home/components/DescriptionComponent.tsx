@@ -11,11 +11,11 @@ export default function DescriptionComponent() {
         {homeMock.Firstabout}
       </p>
 
-      <div className="flex justify-center items-center py-[26px] tablet:py-[53px] desktop:py-[66px]">
+      <div className="flex justify-center items-center pt-[26px] pb-[40px] tablet:py-[53px] desktop:py-[66px]">
         <Image
           src={homeMock.PicUrl}
           alt="Cryptocurrency illustration"
-          className="w-[325px] h-[335px] rounded-[30px] tablet:w-[731px] tablet:h-[411px] desktop:w-[750px] desktop:h-[422px]"
+          className="w-[335px] h-[325px] object-cover rounded-[30px] tablet:w-[731px] tablet:h-[411px] desktop:w-[750px] desktop:h-[422px]"
           width={750}
           height={422}
         />

@@ -261,7 +261,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                     key={index}
                     className={`text-black font-normal desktop:text-base desktop:leading-[25px] tablet:text-sm tablet:leading-[22px] flex items-center ${
                       index === 0
-                        ? "justify-start w-[150px] desktop:pr-[46px] tablet:pr-[28px]"
+                        ? "justify-start desktop:w-[195px] tablet:w-[165px] desktop:pr-[46px] tablet:pr-[28px]"
                         : "flex-grow justify-center pl-4"
                     }`}
                   >
@@ -269,11 +269,11 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                   </TableHead>
                 ))}
                 <TableHead className="flex-grow-0 flex justify-end items-center desktop:pl-5 tablet:pl-[14px] desktop:w-[264px] tablet:w-[144px]">
-                  <div className="bg-white flex gap-x-2 items-center p-4 w-full desktop:h-[63px] tablet:h-[47px] rounded-lg">
+                  <div className="bg-white flex  gap-x-2 items-center p-4 w-full desktop:h-[63px] tablet:h-[47px] rounded-lg">
                     <Image
                       src="/images/home/table/magnifier/Frame.svg"
                       alt="search"
-                      className="w-4 h-4"
+                      className="w-4 h-4 object-cover "
                       width={16}
                       height={16}
                     />
@@ -293,14 +293,14 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                   key={item.id}
                   className={`flex ${index % 2 === 0 ? "bg-[#F7F7F7]" : ""}`}
                 >
-                  <TableCell className="flex items-center desktop:w-[155px] tablet:w-[138px] tablet:pr-[11px] desktop:pr-[15px]">
+                  <TableCell className="flex items-center desktop:w-[195px] tablet:w-[165px] tablet:pr-[11px] desktop:pr-[15px]">
                     {" "}
                     {/* Adjust width for alignment */}
                     <div className="flex items-center desktop:gap-[9px] tablet:gap-[6px]">
                       <Image
                         src={item.pic}
                         alt={item.enName}
-                        className="tablet:w-[33px] tablet:h-[33px] desktop:w-[37px] desktop:h-[37px] "
+                        className="tablet:w-[33px] tablet:h-[33px] desktop:w-[37px] desktop:h-[37px]  "
                         width={32}
                         height={32}
                       />
@@ -342,7 +342,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
               ))}
             </TableBody>
           </Table>
-          <div className="flex items-center justify-center space-x-2 py-4">
+          <div className="flex items-center justify-center space-x-2 tablet:pt-[31px] tablet:pb-[9px] desktop:pt-[35px] ">
             {renderPaginationButtons(totalItems2)}
           </div>
         </div>
@@ -369,17 +369,17 @@ export default function ResponsiveTabbedTablesWithAccordion() {
       };
 
       return (
-        <div className="rounded-lg mt-[15px]">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-[#E3E7EC]">
-                <TableHead className="text-black text-right font-normal text-sm leading-[22px] w-1/3 pr-[30px]">
+        <div className=" mt-[12px]">
+          <Table className="bg-[#F7F7F7] ">
+            <TableHeader className="">
+              <TableRow className="bg-[#E3E7EC] h-[64px] rounded-br-[8px] ">
+                <TableHead className="text-black  text-right font-normal text-sm leading-[22px] w-1/3 pr-[30px] rounded-br-[8px]">
                   نام رمز ارز
                 </TableHead>
                 <TableHead className="text-black text-center font-normal text-sm leading-[22px] w-1/3">
                   ارزش دلاری
                 </TableHead>
-                <TableHead className="text-black text-left font-normal text-sm leading-[22px] w-1/3 pl-[26px]">
+                <TableHead className="text-black text-left font-normal text-sm leading-[22px] w-1/3 pl-[26px]  rounded-bl-[8px]">
                   تغییر روزانه
                 </TableHead>
               </TableRow>
@@ -393,12 +393,12 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                     } ${expandedRow === index ? "h-auto" : "h-[48px]"}`}
                     onClick={() => handleRowClick(index)}
                   >
-                    <TableCell className="text-start items-center text-black font-normal text-xs tablet:text-base pr-[14px] w-1/3">
-                      <div className="flex">
+                    <TableCell className="text-start items-center text-black font-normal text-xs tablet:text-base pr-[12px] w-1/3">
+                      <div className="flex gap-[6px] ">
                         <Image
                           src={item.pic}
                           alt={item.enName}
-                          className="tablet:w-[33px] tablet:h-[33px] pl-[6px] desktop:pl-[8px]"
+                          className="w-[33px] h-[33px] object-cover"
                           width={33}
                           height={33}
                         />
@@ -429,7 +429,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                       className={index % 2 === 0 ? "bg-[#F7F7F7]" : "bg-white"}
                     >
                       <TableCell colSpan={3} className="pt-0 px-[14px]">
-                        <div className="flex flex-col gap-[10px]">
+                        <div className="flex flex-col gap-[11px]">
                           <div className="grid grid-cols-2 justify-between gap-4">
                             <div className="text-start text-black font-normal text-xs leading-[18.78px]">
                               فروش به والت :
@@ -446,7 +446,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
                               {formatNumberWithCommas(item.sell)} تومان
                             </div>
                           </div>
-                          <div className="flex justify-center items-center pt-[24px] pb-[8px]">
+                          <div className="flex justify-center items-center pt-[15px] pb-[9px]">
                             <Link
                               href={`/transaction/${item.enName}`}
                               className="bg-[#1652F0] text-white text-center rounded-lg font-black leading-[18.78px] flex items-center justify-center w-full p-[16px] h-[47px]"
@@ -470,7 +470,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
 
   return (
     <div className="w-full">
-      <h2 className="text-black font-black desktop:text-[40px] desktop:leading-[63px] tablet:text-[36px] tablet:leading-[50px] leading-[32px] text-xl text-center desktop:mb-[83px] tablet:mt-[32px] mb-[32px]">
+      <h2 className="text-black font-black desktop:text-[37px] desktop:leading-[63px] tablet:text-[36px] tablet:leading-[50px] leading-[32px] text-xl text-center desktop:mb-[83px]  mb-[52px]">
         لیست قیمت لحظه‌ای ارزهای دیجیتال‌
       </h2>
       <div className="hidden tablet:block">
@@ -503,7 +503,10 @@ export default function ResponsiveTabbedTablesWithAccordion() {
               key={table.name}
               value={table.name}
             >
-              <AccordionTrigger className="border-none text-center rounded-lg font-black data-[state=open]:bg-[#1652F0] data-[state=open]:text-white">
+              <AccordionTrigger
+                className="border-none text-center rounded-lg font-black data-[state=open]:bg-[#1652F0] data-[state=open]:text-white
+              text-[12px] leading-[18.78px]"
+              >
                 {table.name}
               </AccordionTrigger>
               <AccordionContent className="rounded-lg">
@@ -513,7 +516,7 @@ export default function ResponsiveTabbedTablesWithAccordion() {
           ))}
         </Accordion>
         <div
-          className="flex items-center justify-center space-x-2 py-4"
+          className="flex items-center justify-center space-x-2 pb-[21px] pt-[12px]"
           dir="ltr"
         >
           {renderPaginationButtons(totalItems2)}

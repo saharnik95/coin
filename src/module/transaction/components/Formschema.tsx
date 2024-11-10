@@ -79,7 +79,7 @@ export default function ProfileForm() {
           <FirstCurrencySelect control={form.control} />
         </div>
 
-        <div className="flex w-full justify-end desktop:pt-[16px] pt-2">
+        <div className="flex w-full justify-end desktop:pt-[16px] pt-[9px]">
           <CalculateButton onClick={calculateAmount} />
         </div>
 
@@ -97,7 +97,7 @@ export default function ProfileForm() {
           secondCurrency={form.watch("secondCurrency")}
         />
 
-        <Button className="mt-4 h-[47px] bg-white ring-1 ring--[#0D1A8E] text-[#0D1A8E] border-[#0D1A8E] border-1px border-solid desktop:rounded-[50px] rounded-[8px] hover:bg-[#1652F0] hover:text-white desktop:pt-2 pt-1">
+        <Button className="mt-[19px] tablet:mt-[16px] desktop:mt-[7px] h-[47px] bg-white ring-1 ring--[#0D1A8E] text-[#0D1A8E] border-[#0D1A8E] border-1px border-solid desktop:rounded-[50px] rounded-[8px] hover:bg-[#1652F0] hover:text-white desktop:pt-2 pt-1">
           ادامه خرید
         </Button>
       </form>
@@ -106,6 +106,8 @@ export default function ProfileForm() {
 }
 
 function AmountInput({ control }: { control: any }) {
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
+
   return (
     <FormField
       control={control}
@@ -115,9 +117,22 @@ function AmountInput({ control }: { control: any }) {
           <FormControl className="border-none w-full">
             <input
               {...field}
-              type="number"
-              className="border-none ring-none outline-none w-full p-3 text-[#696464] desktop:leading-[22px] leading-[18px] desktop:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none"
-              placeholder="مقدار را وارد کنید"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              className="border-none ring-none outline-none w-full p-3 text-[#696464] desktop:leading-[22px] leading-[18px] desktop:text-[14px] text-[12px] h-[47px] desktop:rounded-r-[50px] rounded-r-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-none font-light"
+              placeholder={showPlaceholder ? "0" : "مقدار را وارد کنید"}
+              onFocus={() => setShowPlaceholder(false)}
+              onBlur={(e) => {
+                if (e.target.value === "") {
+                  setShowPlaceholder(true);
+                }
+              }}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9]/g, "");
+                field.onChange(value === "" ? "" : Number(value));
+              }}
+              value={field.value === 0 && showPlaceholder ? "" : field.value}
             />
           </FormControl>
           <FormMessage />
@@ -141,22 +156,26 @@ function FirstCurrencySelect({ control }: { control: any }) {
             }}
             value={field.value}
           >
-            <FormControl className="w-full">
-              <SelectTrigger className="border-r pt-3 border-[1px] border-solid border-[#9b9b9b] border-l-0 border-t-0 border-b-0 w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] rounded-r-0 desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
-                <div className="flex flex-row gap-3 items-center">
-                  {!field.value && (
-                    <Image
-                      src="/images/transaction/form/iran.png"
-                      alt="currency"
-                      className="w-[26px] h-[26px]"
-                      width={26}
-                      height={26}
+            <FormControl className="w-full  flex">
+              <SelectTrigger className="border-0 pt-3 justify-between  w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] rounded-r-0 desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
+                <div className="flex gap-[9px] desktop:gap-[11px]">
+                  <div className="h-[37px] w-[1px] bg-[#9b9b9b]"></div>
+
+                  <div className="flex flex-row gap-[8px] tablet:gap-[5px] desktop:gap-[10px] items-center">
+                    {!field.value && (
+                      <Image
+                        src="/images/transaction/form/iran.png"
+                        alt="currency"
+                        className="w-[26px] h-[26px]  object-cover"
+                        width={26}
+                        height={26}
+                      />
+                    )}
+                    <SelectValue
+                      placeholder="تومان"
+                      className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[12px] text-[12px]"
                     />
-                  )}
-                  <SelectValue
-                    placeholder="تومان"
-                    className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[12px] text-[12px]"
-                  />
+                  </div>
                 </div>
               </SelectTrigger>
             </FormControl>
@@ -168,7 +187,7 @@ function FirstCurrencySelect({ control }: { control: any }) {
                       <Image
                         src={currency.imageUrl}
                         alt={currency.name}
-                        className="w-[26px] h-[26px]"
+                        className="w-[26px] h-[26px] object-cover"
                         width={26}
                         height={26}
                       />
@@ -195,7 +214,7 @@ function CalculateButton({ onClick }: { onClick: () => void }) {
       <Image
         src="/images/transaction/form/Ellipse 48.svg"
         alt="flash"
-        className="w-[14px] h-[13px]"
+        className="w-[14.4px] h-[13.54px] object-cover"
         width={14}
         height={13}
       />
@@ -225,21 +244,24 @@ function SecondCurrencySelect({ control }: { control: any }) {
             value={field.value}
           >
             <FormControl className="p-0">
-              <SelectTrigger className="border-r border-[1px] border-solid border-[#9b9b9b] border-l-0 border-t-0 border-b-0 w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
-                <div className="flex flex-row gap-3 items-center">
-                  {!field.value && (
-                    <Image
-                      src="/images/transaction/form/bitcoin.png"
-                      alt="currency"
-                      className="w-[26px] h-[26px]"
-                      width={26}
-                      height={26}
+              <SelectTrigger className=" justify-between border-0 w-full p-3 text-[#696464] tablet:leading-[22px] leading-[18px] tablet:text-[14px] text-[12px] h-[47px] desktop:rounded-l-[50px] rounded-l-[8px] desktop:bg-[#F6F4F4] bg-[#F8F9FA] ring-0 focus:border-l-0 focus:border-t-0 focus:border-b-0">
+                <div className="flex gap-[9px] desktop:gap-[11px]">
+                  <div className="h-[37px] w-[1px] bg-[#9b9b9b]"></div>
+                  <div className="flex flex-row gap-[8px] tablet:gap-[5px] desktop:gap-[10px] items-center">
+                    {!field.value && (
+                      <Image
+                        src="/images/transaction/form/bitcoin.png"
+                        alt="currency"
+                        className="w-[26px] h-[26px] object-cover"
+                        width={26}
+                        height={26}
+                      />
+                    )}
+                    <SelectValue
+                      className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px]"
+                      placeholder=" بیت کوین"
                     />
-                  )}
-                  <SelectValue
-                    className="text-[#696464] font-light desktop:leading-[22px] desktop:text-[14px] leading-[18px] text-[12px]"
-                    placeholder=" بیت کوین"
-                  />
+                  </div>
                 </div>
               </SelectTrigger>
             </FormControl>
@@ -251,7 +273,7 @@ function SecondCurrencySelect({ control }: { control: any }) {
                       <Image
                         src={currency.imageUrl}
                         alt={currency.name}
-                        className="w-[26px] h-[26px]"
+                        className="w-[26px] h-[26px] object-cover"
                         width={26}
                         height={26}
                       />
@@ -285,7 +307,7 @@ function ExchangeRateDisplay({
 
   return (
     <>
-      <div className="flex flex-row justify-between desktop:pt-2 pt-1">
+      <div className="flex flex-row justify-between desktop:pt-[7px] pt-1">
         <h5 className="text-black font-semibold desktop:text-[16px] desktop:leading-[25px] leading-[22px] text-[14px]">
           نرخ ارز یک
         </h5>

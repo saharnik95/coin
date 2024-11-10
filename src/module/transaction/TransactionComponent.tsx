@@ -172,21 +172,23 @@ export default function TransactionComponent() {
   } = transactionData;
 
   return (
-    <div className="flex flex-col justify-between items-center bg-[#FCFCFE] desktop:px-[150px] desktop:pt-[60px] tablet:px-[50px] tablet:pt-[22px] tablet:pb-[76px] px-[20px] pt-[40px] pb-[31px]">
-      <TransactionFormComponent
-        name={name}
-        code={currencyCode}
-        change={change}
-        buy={buy}
-        sell={sell}
-        usd={usd}
-        value={value}
-        pic={pic}
-      />
-      <TransactionFirstDescriptionComponent name={name} about={about} />
-      <TransactionChartComponent name={name} code={currencyCode} />
-      <TransactionSecondDescriptionComponent name={name} about={about} />
-      <TransactionQuestionComponent name={name} />
+    <div className="bg-[#FCFCFE] ">
+      <div className="flex flex-col justify-between items-center max-w-[1140px] mx-auto desktop:px-0 desktop:pt-[60px] tablet:px-[50px] tablet:pt-[22px] tablet:pb-[76px] px-[20px] pt-[40px] pb-[31px]">
+        <TransactionFormComponent
+          name={name}
+          code={currencyCode}
+          change={change}
+          buy={buy}
+          sell={sell}
+          usd={usd}
+          value={value}
+          pic={pic}
+        />
+        <TransactionFirstDescriptionComponent name={name} about={about} />
+        <TransactionChartComponent name={name} code={currencyCode} />
+        <TransactionSecondDescriptionComponent name={name} about={about} />
+        <TransactionQuestionComponent name={name} />
+      </div>
     </div>
   );
 }
