@@ -25,14 +25,22 @@ ChartJS.register(
   Filler
 );
 
+// Types
+type TimePeriod = "24h" | "1w" | "1m" | "1y";
+
+interface ChartData {
+  currencyPrices: number[];
+  usdPrices: number[];
+  equality: number[];
+}
+
 interface TransactionChartComponentProps {
   name?: string;
   code?: string;
 }
 
-type TimePeriod = "24h" | "1w" | "1m" | "1y";
-
-const timeLabels: Record<TimePeriod, string[]> = {
+// Constants
+const TIME_LABELS: Record<TimePeriod, string[]> = {
   "24h": Array.from({ length: 24 }, (_, i) => `${(i + 19) % 24}:29`),
   "1w": [
     "sun",
@@ -59,16 +67,13 @@ const timeLabels: Record<TimePeriod, string[]> = {
   ],
 };
 
-export default function TransactionChartComponent({
-  name = "بیت کوین",
-  code = "BTC",
-}: TransactionChartComponentProps) {
-  const [period, setPeriod] = React.useState<TimePeriod>("24h");
-  const [chartData, setChartData] = React.useState<{
-    currencyPrices: number[];
-    usdPrices: number[];
-    equality: number[];
-  }>({ currencyPrices: [], usdPrices: [], equality: [] });
+// Custom Hook
+const useChartData = (code: string, period: TimePeriod) => {
+  const [chartData, setChartData] = React.useState<ChartData>({
+    currencyPrices: [],
+    usdPrices: [],
+    equality: [],
+  });
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -91,8 +96,61 @@ export default function TransactionChartComponent({
     fetchData();
   }, [code, period]);
 
+  return chartData;
+};
+
+// Atomic Components
+const PeriodButton = ({
+  period,
+  activePeriod,
+  onClick,
+}: {
+  period: TimePeriod;
+  activePeriod: TimePeriod;
+  onClick: () => void;
+}) => (
+  <button
+    onClick={onClick}
+    className={`font-normal text-[12px] leading-[18px] w-[48px] ${
+      activePeriod === period ? "text-[#0D1A8E]" : "text-[#696464]"
+    }`}
+  >
+    {period === "24h"
+      ? "24ساعته"
+      : period === "1w"
+      ? "1هفته"
+      : period === "1m"
+      ? "1ماه"
+      : "1سال"}
+  </button>
+);
+
+const ChartLegendItem = ({
+  color,
+  label,
+}: {
+  color: string;
+  label: string;
+}) => (
+  <div className="flex items-center desktop:pl-[57px] pl-[23px]">
+    <div
+      className="desktop:w-[10px] desktop:h-[10px] w-[7px] h-[7px] rounded-full ml-2"
+      style={{ backgroundColor: color }}
+    ></div>
+    <span className="text-xs font-extralight leading-[18.78px]">{label}</span>
+  </div>
+);
+
+// Main Component
+export default function TransactionChartComponent({
+  name = "بیت کوین",
+  code = "BTC",
+}: TransactionChartComponentProps) {
+  const [period, setPeriod] = React.useState<TimePeriod>("24h");
+  const chartData = useChartData(code, period);
+
   const topChartData = {
-    labels: timeLabels[period],
+    labels: TIME_LABELS[period],
     datasets: [
       {
         label: "برابری",
@@ -117,7 +175,7 @@ export default function TransactionChartComponent({
   };
 
   const bottomChartData = {
-    labels: timeLabels[period],
+    labels: TIME_LABELS[period],
     datasets: [
       {
         label: "نرخ دلار",
@@ -134,19 +192,10 @@ export default function TransactionChartComponent({
   const topChartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    plugins: {
-      title: { display: false },
-      legend: { display: false },
-    },
+    interaction: { mode: "index", intersect: false },
+    plugins: { title: { display: false }, legend: { display: false } },
     scales: {
-      x: {
-        display: false,
-        grid: { display: false },
-      },
+      x: { display: false, grid: { display: false } },
       y: {
         type: "linear",
         display: true,
@@ -161,9 +210,7 @@ export default function TransactionChartComponent({
         display: true,
         position: "left",
         grid: { drawOnChartArea: false },
-        ticks: {
-          callback: (value: number) => (value / 1000).toFixed(0) + "k",
-        },
+        ticks: { callback: (value: number) => (value / 1000).toFixed(0) + "k" },
       },
     },
   };
@@ -171,14 +218,8 @@ export default function TransactionChartComponent({
   const bottomChartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
-    interaction: {
-      mode: "index",
-      intersect: false,
-    },
-    plugins: {
-      title: { display: false },
-      legend: { display: false },
-    },
+    interaction: { mode: "index", intersect: false },
+    plugins: { title: { display: false }, legend: { display: false } },
     scales: {
       x: {
         grid: { display: false },
@@ -188,11 +229,7 @@ export default function TransactionChartComponent({
         type: "linear",
         display: true,
         position: "right",
-        grid: {
-          drawOnChartArea: true,
-          drawTicks: false,
-          display: true,
-        },
+        grid: { drawOnChartArea: true, drawTicks: false, display: true },
         ticks: {
           callback: (value: number) => (value / 1000).toFixed(0) + "k",
           maxTicksLimit: 10,
@@ -209,39 +246,25 @@ export default function TransactionChartComponent({
       </h2>
       <div className="bg-white shadow-custom rounded-[30px]">
         <div
-          className="w-full  desktop:pt-[20px] desktop:pb-[11px] desktop:px-[66px] 
-        tablet:pt-[12px] tablet:pb-[9px] tablet:px-[40px]  pt-[21px] pb-[34px] px-[21px]
-         rtl"
+          className="w-full desktop:pt-[20px] desktop:pb-[11px] desktop:px-[66px] tablet:pt-[12px] tablet:pb-[9px] tablet:px-[40px] pt-[21px] pb-[34px] px-[21px] rtl"
           dir="rtl"
         >
-          <div className="rounded-lg ">
+          <div className="rounded-lg">
             <div className="flex justify-start desktop:gap-[30px] tablet:gap-[8px] gap-[19px] desktop:mb-[23px] tablet:mb-[8px] mb-[21px]">
-              {(Object.keys(timeLabels) as TimePeriod[]).map((p) => (
-                <button
+              {(Object.keys(TIME_LABELS) as TimePeriod[]).map((p) => (
+                <PeriodButton
                   key={p}
+                  period={p}
+                  activePeriod={period}
                   onClick={() => setPeriod(p)}
-                  className={`font-normal text-[12px] leading-[18px] w-[48px] ${
-                    period === p ? "text-[#0D1A8E]" : "text-[#696464]"
-                  }`}
-                >
-                  {p === "24h"
-                    ? "24ساعته"
-                    : p === "1w"
-                    ? "1هفته"
-                    : p === "1m"
-                    ? "1ماه"
-                    : "1سال"}
-                </button>
+                />
               ))}
             </div>
             <div className="space-y-[58px] tablet:space-y-[34px] desktop:space-y-[53px]">
-              <div className="desktop:h-[404px] tablet:h-[259px] h-[233px] ">
+              <div className="desktop:h-[404px] tablet:h-[259px] h-[233px]">
                 <Line options={topChartOptions} data={topChartData} />
               </div>
-              <div
-                className="desktop:h-[135px] tablet:h-[87px] h-[99px]  border-b-[2.5px] tablet:border-b-[1px] border-[#F1F1F1]
-              pb-[11px] tablet:pb-[3px] desktop:pb-[15px]"
-              >
+              <div className="desktop:h-[135px] tablet:h-[87px] h-[99px] border-b-[2.5px] tablet:border-b-[1px] border-[#F1F1F1] pb-[11px] tablet:pb-[3px] desktop:pb-[15px]">
                 <Line options={bottomChartOptions} data={bottomChartData} />
               </div>
             </div>
@@ -251,18 +274,11 @@ export default function TransactionChartComponent({
                 { color: "rgba(22,82,240,1)", label: "برابری" },
                 { color: "rgba(247,147,26,1)", label: `قیمت ${name}` },
               ].map((item, index) => (
-                <div
+                <ChartLegendItem
                   key={index}
-                  className="flex items-center desktop:pl-[57px] pl-[23px]"
-                >
-                  <div
-                    className="desktop:w-[10px] desktop:h-[10px] w-[7px] h-[7px] rounded-full ml-2"
-                    style={{ backgroundColor: item.color }}
-                  ></div>
-                  <span className="text-xs font-extralight leading-[18.78px]">
-                    {item.label}
-                  </span>
-                </div>
+                  color={item.color}
+                  label={item.label}
+                />
               ))}
             </div>
           </div>

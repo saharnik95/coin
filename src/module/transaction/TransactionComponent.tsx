@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -12,6 +12,7 @@ import TransactionFormComponent from "./components/TransactionFormComponent";
 import TransactionSecondDescriptionComponent from "./components/TransactionSecondDescriptionComponent";
 import TransactionQuestionComponent from "./components/TransactionQuestionComponent";
 
+// Types
 interface TransactionData {
   name: string;
   code: string;
@@ -24,17 +25,14 @@ interface TransactionData {
   about: string;
 }
 
-export default function TransactionComponent() {
+// Custom Hooks
+const useTransactionData = (code: string) => {
   const [transactionData, setTransactionData] =
-    useState<TransactionData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const params = useParams();
-  const router = useRouter();
-  const encodedCode = params.id as string;
-  const code = decodeURIComponent(encodedCode);
+    React.useState<TransactionData | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
-  const fetchTransactionData = async () => {
+  const fetchTransactionData = React.useCallback(async () => {
     if (!code) {
       setError("No currency code provided");
       setLoading(false);
@@ -93,11 +91,112 @@ export default function TransactionComponent() {
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchTransactionData();
   }, [code]);
+
+  React.useEffect(() => {
+    fetchTransactionData();
+  }, [fetchTransactionData]);
+
+  return { transactionData, loading, error, fetchTransactionData };
+};
+
+// Atomic Components
+const LoadingSkeleton = () => (
+  <div className="space-y-4 p-4">
+    <Skeleton className="h-8 w-full" />
+    <Skeleton className="h-64 w-full" />
+    <Skeleton className="h-32 w-full" />
+  </div>
+);
+
+const ErrorAlert = ({
+  error,
+  onRetry,
+  onGoBack,
+}: {
+  error: string;
+  onRetry: () => void;
+  onGoBack: () => void;
+}) => (
+  <Alert variant="destructive" className="m-4">
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>Error</AlertTitle>
+    <AlertDescription>{error}</AlertDescription>
+    <div className="mt-4 flex space-x-4">
+      <Button onClick={onRetry} variant="outline">
+        <RefreshCcw className="mr-2 h-4 w-4" />
+        Retry
+      </Button>
+      <Button onClick={onGoBack} variant="outline">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Go Back
+      </Button>
+    </div>
+  </Alert>
+);
+
+const NoDataAlert = ({
+  onRetry,
+  onGoBack,
+}: {
+  onRetry: () => void;
+  onGoBack: () => void;
+}) => (
+  <Alert className="m-4">
+    <AlertCircle className="h-4 w-4" />
+    <AlertTitle>No Data</AlertTitle>
+    <AlertDescription>
+      No transaction data found for the given currency code.
+    </AlertDescription>
+    <div className="mt-4 flex space-x-4">
+      <Button onClick={onRetry} variant="outline">
+        <RefreshCcw className="mr-2 h-4 w-4" />
+        Retry
+      </Button>
+      <Button onClick={onGoBack} variant="outline">
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Go Back
+      </Button>
+    </div>
+  </Alert>
+);
+
+const TransactionContent = ({ data }: { data: TransactionData }) => (
+  <div className="bg-[#FCFCFE]">
+    <div className="flex flex-col justify-between items-center max-w-[1140px] mx-auto desktop:px-0 desktop:pt-[60px] tablet:px-[50px] tablet:pt-[22px] tablet:pb-[76px] px-[20px] pt-[40px] pb-[31px]">
+      <TransactionFormComponent
+        name={data.name}
+        code={data.code}
+        change={data.change}
+        buy={data.buy}
+        sell={data.sell}
+        usd={data.usd}
+        value={data.value}
+        pic={data.pic}
+      />
+      <TransactionFirstDescriptionComponent
+        name={data.name}
+        about={data.about}
+      />
+      <TransactionChartComponent name={data.name} code={data.code} />
+      <TransactionSecondDescriptionComponent
+        name={data.name}
+        about={data.about}
+      />
+      <TransactionQuestionComponent name={data.name} />
+    </div>
+  </div>
+);
+
+// Main Component
+export default function TransactionComponent() {
+  const params = useParams();
+  const router = useRouter();
+  const encodedCode = params.id as string;
+  const code = decodeURIComponent(encodedCode);
+
+  const { transactionData, loading, error, fetchTransactionData } =
+    useTransactionData(code);
 
   const handleRetry = () => {
     fetchTransactionData();
@@ -108,87 +207,18 @@ export default function TransactionComponent() {
   };
 
   if (loading) {
-    return (
-      <div className="space-y-4 p-4">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
+    return <LoadingSkeleton />;
   }
 
   if (error) {
     return (
-      <Alert variant="destructive" className="m-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-        <div className="mt-4 flex space-x-4">
-          <Button onClick={handleRetry} variant="outline">
-            <RefreshCcw className="mr-2 h-4 w-4" />
-            Retry
-          </Button>
-          <Button onClick={handleGoBack} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
-        </div>
-      </Alert>
+      <ErrorAlert error={error} onRetry={handleRetry} onGoBack={handleGoBack} />
     );
   }
 
   if (!transactionData) {
-    return (
-      <Alert className="m-4">
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>No Data</AlertTitle>
-        <AlertDescription>
-          No transaction data found for the given currency code.
-        </AlertDescription>
-        <div className="mt-4 flex space-x-4">
-          <Button onClick={handleRetry} variant="outline">
-            <RefreshCcw className="mr-2 h-4 w-4" />
-            Retry
-          </Button>
-          <Button onClick={handleGoBack} variant="outline">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Go Back
-          </Button>
-        </div>
-      </Alert>
-    );
+    return <NoDataAlert onRetry={handleRetry} onGoBack={handleGoBack} />;
   }
 
-  const {
-    name,
-    change,
-    buy,
-    sell,
-    code: currencyCode,
-    usd,
-    value,
-    pic,
-    about,
-  } = transactionData;
-
-  return (
-    <div className="bg-[#FCFCFE] ">
-      <div className="flex flex-col justify-between items-center max-w-[1140px] mx-auto desktop:px-0 desktop:pt-[60px] tablet:px-[50px] tablet:pt-[22px] tablet:pb-[76px] px-[20px] pt-[40px] pb-[31px]">
-        <TransactionFormComponent
-          name={name}
-          code={currencyCode}
-          change={change}
-          buy={buy}
-          sell={sell}
-          usd={usd}
-          value={value}
-          pic={pic}
-        />
-        <TransactionFirstDescriptionComponent name={name} about={about} />
-        <TransactionChartComponent name={name} code={currencyCode} />
-        <TransactionSecondDescriptionComponent name={name} about={about} />
-        <TransactionQuestionComponent name={name} />
-      </div>
-    </div>
-  );
+  return <TransactionContent data={transactionData} />;
 }
